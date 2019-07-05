@@ -52,10 +52,22 @@ m4_cword(DOLIT,dolit)
 	next(ip+1,sp,rp);
 }
 
+	/* 3lib bindings */
+
 m4_cword(BYE,bye)
 {
 	(void)ip; (void)sp; (void)rp;
 	bye();
+}
+m4_cword(RX,rx)
+{
+	push(sp,rx());
+	next(ip,sp,rp);
+}
+m4_cword(TX,tx)
+{
+	tx((char)pop(sp));
+	next(ip,sp,rp);
 }
 
 	/* Branching */
@@ -155,11 +167,11 @@ m4_cword(-ROT,unrot)
 	/* Arithmetic */
 m4_divert(-1)/*
 m4_define(`OP1',`{
-	sp[0]=$1sp[0];
+	sp[0]=$2($1sp[0]$3);
 	next(ip,sp,rp);
 }')
 m4_define(`OP2',`{
-	sp[1]$1=sp[0];
+	sp[1]=$2(($3cell_t)sp[1]$1($3cell_t)sp[0]);
 	next(ip,sp+1,rp);
 }')*/m4_divert(0)m4_dnl
 
@@ -186,6 +198,25 @@ m4_cword(/MOD,divmod)
 	sp[0]=a/b;
 	next(ip,sp,rp);
 }
+
+m4_cword(=,eq) OP2(==,-)
+m4_cword(<>,neq) OP2(!=,-)
+m4_cword(>,gt) OP2(>,-)
+m4_cword(>=,gte) OP2(>=,-)
+m4_cword(<,lt) OP2(<,-)
+m4_cword(<=,lte) OP2(<=,-)
+
+m4_cword(U>,ugt) OP2(>,-,u)
+m4_cword(U>=,ugte) OP2(>=,-,u)
+m4_cword(U<,ult) OP2(<,-,u)
+m4_cword(U<=,ulte) OP2(<=,-,u)
+
+m4_cword(0=,zeq) OP1(!,-)
+m4_cword(0<>,zneq) OP1(,-,!=0)
+m4_cword(0>,zgt) OP1(,-,>0)
+m4_cword(0>=,zgte) OP1(,-,>=0)
+m4_cword(0<,zlt) OP1(,-,<0)
+m4_cword(0<=,zlte) OP1(,-,<=0)
 
 	/* Entry */
 
