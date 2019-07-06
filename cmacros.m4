@@ -8,7 +8,7 @@ m4_define(`m4_cword',`m4_dnl
 void $2_code();
 struct {
 	link_t link;
-	func_t xt[2];
+	prim_t xt[2];
 } $2_defn = {
 	{m4_last,m4_len(`$1'),m4_cs(`$1')},
 	{$2_code,exit_code}
@@ -23,14 +23,14 @@ m4_define(`m4_argc',`$#')
 m4_define(`m4_forthword',`m4_dnl
 struct {
 	link_t link;
-	func_t xt[m4_argc(m4_shift(m4_shift($@)))];
+	prim_t xt[m4_argc(m4_shift(m4_shift($@)))];
 } $2_defn = {
 	{m4_last,m4_len(`$1'),m4_cs(`$1')},
 	{m4_shift(m4_shift($@))}
 };m4_dnl
 m4_define(`m4_last',`&$2_defn.link')m4_dnl
 ')
-m4_define(`L',`(func_t)(cell_t)$1')
+m4_define(`L',`(prim_t)(cell_t)$1')
 m4_define(`P',`$1_code')
 m4_define(`C',`($1*sizeof(cell_t))')
 m4_define(`X',`$1_defn.xt')
