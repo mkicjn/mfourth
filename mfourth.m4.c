@@ -224,6 +224,11 @@ m4_cword(!,store)
 	*(cell_t *)sp[0]=sp[1];
 	next(ip,sp+2,rp);
 }
+m4_cword(+!,addstore)
+{
+	*(cell_t *)sp[0]+=sp[1];
+	next(ip,sp+2,rp);
+}
 m4_cword(C@,charfetch)
 {
 	sp[0]=*(char *)sp[0];
@@ -236,7 +241,7 @@ m4_cword(C!,charstore)
 }
 
 m4_forthword(ALLOT,allot,
-	PL(here_ptr),P(tuck),P(fetch),P(add),P(swap),P(store),P(exit)
+	PL(here_ptr),P(addstore),P(exit)
 )
 m4_forthword(`,',comma,
 	NP(here),P(store),NP(cell),NP(allot),P(exit)
@@ -244,6 +249,27 @@ m4_forthword(`,',comma,
 m4_forthword(`C,',charcomma,
 	NP(here),P(charstore),PL(1),NP(allot),P(exit)
 )
+
+	/* Parsing */
+
+#define TIB_SIZE 1<<12
+char tib[TIB_SIZE];
+m4_constant(TIB,tib,tib)
+char *source=tib;
+cell_t source_len=0;
+m4_constant(SOURCE-ID,source_id,0)
+m4_variable(>IN,in,0)
+
+m4_forthword(SOURCE,source,
+	PL(&source),P(fetch),PL(&source_len),P(fetch),P(exit)
+)
+m4_forthword(EVALUATE,evaluate,
+	PL(&source_len),P(store),PL(&source),P(store),
+	PL(source_id_ptr),PL(~0),P(store),PL(in_ptr),PL(0),P(store),
+	P(exit)
+)
+
+/*TODO: KEY, REFILL, PARSE-WORD, PARSE, WORD*/
 
 	/* Entry */
 
