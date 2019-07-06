@@ -22,9 +22,8 @@ typedef struct link_s {
 	char *name;
 } link_t;
 
-typedef void (*func_t)(cell_t *,cell_t *,cell_t *);
+typedef void (*prim_t)(cell_t *,cell_t *,cell_t *);
 enum {F_IMM=0x80,F_HID=0x40};
-#define NULL ((void *)0)
 
 	/* Stacks */
 
@@ -42,7 +41,7 @@ cell_t uarea[USER_AREA_SIZE];
 
 void next(cell_t *ip,cell_t *sp,cell_t *rp)
 {
-	(*(func_t *)ip)(ip+1,sp,rp);
+	(*(prim_t *)ip)(ip+1,sp,rp);
 }
 
 /*see word.m4 for macro definitions*/

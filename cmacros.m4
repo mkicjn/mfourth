@@ -2,7 +2,7 @@ m4_divert(-1)
 
 	Primitive word definition
 
-m4_define(`m4_last',`NULL')
+m4_define(`m4_last',`((void *)0)')
 m4_define(`m4_cs',`m4_format("\%03o%s",m4_len(`$1'),``$1'')')
 m4_define(`m4_cword',`m4_dnl
 void $2_code();
