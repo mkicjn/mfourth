@@ -208,7 +208,41 @@ m4_cword(0<=,zlte) m4_1op(,-,<=0)
 
 	/* Constants */
 
-// TODO
+m4_constant(CELL,cell,sizeof(cell_t))
+m4_variable(HERE,here,uarea)
+
+	/* Memory access */
+
+m4_cword(@,fetch)
+{
+	sp[0]=*(cell_t *)sp[0];
+	next(ip,sp,rp);
+}
+m4_cword(!,store)
+{
+	*(cell_t *)sp[0]=sp[1];
+	next(ip,sp+2,rp);
+}
+m4_cword(C@,charfetch)
+{
+	sp[0]=*(char *)sp[0];
+	next(ip,sp,rp);
+}
+m4_cword(C!,charstore)
+{
+	*(char *)sp[0]=(char)sp[1];
+	next(ip,sp+2,rp);
+}
+
+m4_forthword(ALLOT,allot,
+	PL(here_ptr),P(tuck),P(fetch),P(add),P(swap),P(store),P(exit)
+)
+m4_forthword(`,',comma,
+	NP(here),P(store),NP(cell),NP(allot),P(exit)
+)
+m4_forthword(`C,',charcomma,
+	NP(here),P(charstore),PL(1),NP(allot),P(exit)
+)
 
 	/* Entry */
 

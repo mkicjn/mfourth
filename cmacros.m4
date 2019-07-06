@@ -69,10 +69,10 @@ m4_define(`m4_variable',`m4_dnl
 m4_forthword($1,$2,
 	PL(&$2_defn.xt[3]),P(exit),L($3)
 )
-cell_t *$2_var=(cell_t *)&$2_defn.xt[3];')
+#define $2_ptr (&$2_defn.xt[3])')
 m4_define(`m4_constant',`m4_dnl
 m4_forthword($1,$2,
 	PL($3),P(exit)
 )
-cell_t $2_const=$3;')
+#define $2_ptr (&$2_defn.xt[1])')
 m4_divert(0)m4_dnl
