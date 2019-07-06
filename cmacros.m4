@@ -83,7 +83,7 @@ m4_define(`m4_IF',`
 	P(zbranch),L(C(m4_eval(m4_count(m4_expand($1))+1))),m4_expand($1)
 	')
 m4_define(`m4_IF_ELSE',`
-	P(zbranch),L(C(m4_eval(m4_count(m4_expand($1))+3))),m4_expand($1)
+	P(zbranch),L(C(m4_eval(m4_count(m4_expand($1))+3))),m4_expand($1),
 	P(branch),L(C(m4_eval(m4_count(m4_expand($2))+1))),m4_expand($2)
 	')
 m4_define(`m4_BEGIN_AGAIN',`
@@ -93,7 +93,7 @@ m4_define(`m4_BEGIN_UNTIL',`
 	m4_expand($1),P(zbranch),L(C(m4_eval(-m4_count(m4_expand($1))-1)))
 	')
 m4_define(`m4_BEGIN_WHILE_REPEAT',`
-	m4_expand($1),P(zbranch),L(C(m4_eval(m4_count(m4_expand($2))+3)))
+	m4_expand($1),P(zbranch),L(C(m4_eval(m4_count(m4_expand($2))+3))),
 	m4_expand($2),P(branch),L(C(m4_eval(-m4_count(m4_expand($1,$2))-3)))
 	')
 m4_divert(0)m4_dnl

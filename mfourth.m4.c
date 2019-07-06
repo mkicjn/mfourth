@@ -175,8 +175,8 @@ m4_cword(XOR,xor) m4_2op(^)
 
 m4_cword(NEGATE,neg) m4_1op(-)
 m4_cword(INVERT,not) m4_1op(~)
-m4_cword(1+,inc) m4_1op(1+)
-m4_cword(1-,dec) m4_1op(-1+)
+m4_cword(1+,incr) m4_1op(1+)
+m4_cword(1-,decr) m4_1op(-1+)
 
 m4_cword(/MOD,divmod)
 {
@@ -273,11 +273,11 @@ m4_forthword(EVALUATE,evaluate,
 
 	/* Entry */
 
-m4_forthword(`1+',oneplus,
-	PL(1),P(add),P(exit)
+m4_forthword(CR,cr,
+	PL(10),P(tx),P(exit)
 )
 m4_forthword(`',entry,
-	PL(2),NP(oneplus),P(bye)
+	PL(33),m4_BEGIN_WHILE_REPEAT(`P(dup),PL(127),P(lt)',`P(dup),P(tx),P(incr)'),NP(cr),P(bye)
 )
 
 void _start(void)
