@@ -25,6 +25,15 @@ typedef void (*func_t)(cell_t *,cell_t *,cell_t *);
 enum {F_IMM=0x80,F_HID=0x40};
 #define NULL ((void *)0)
 
+	/* Stacks */
+
+#define STACK_SIZE (1<<12)
+#define USER_AREA_SIZE (1<<16)
+cell_t stack[STACK_SIZE];
+cell_t rstack[STACK_SIZE];
+cell_t uarea[USER_AREA_SIZE];
+#define EOS(s) &s[sizeof(s)/sizeof(*s)]
+
 	/* Kernel structure */
 
 #define push(s,v) (*(--s)=(cell_t)(v))
@@ -166,30 +175,30 @@ m4_cword(-ROT,unrot)
 
 	/* Arithmetic */
 m4_divert(-1)/*
-m4_define(`OP1',`{
+m4_define(`m4_1op',`{
 	sp[0]=$2($1sp[0]$3);
 	next(ip,sp,rp);
 }')
-m4_define(`OP2',`{
+m4_define(`m4_2op',`{
 	sp[1]=$2(($3cell_t)sp[1]$1($3cell_t)sp[0]);
 	next(ip,sp+1,rp);
 }')*/m4_divert(0)m4_dnl
 
-m4_cword(+,add) OP2(+)
-m4_cword(-,sub) OP2(-)
-m4_cword(*,mul) OP2(*)
-m4_cword(/,div) OP2(/)
-m4_cword(MOD,mod) OP2(%)
-m4_cword(LSHIFT,lsh) OP2(<<)
-m4_cword(RSHIFT,rsh) OP2(>>)
-m4_cword(AND,and) OP2(&)
-m4_cword(OR,or) OP2(|)
-m4_cword(XOR,xor) OP2(^)
+m4_cword(+,add) m4_2op(+)
+m4_cword(-,sub) m4_2op(-)
+m4_cword(*,mul) m4_2op(*)
+m4_cword(/,div) m4_2op(/)
+m4_cword(MOD,mod) m4_2op(%)
+m4_cword(LSHIFT,lsh) m4_2op(<<)
+m4_cword(RSHIFT,rsh) m4_2op(>>)
+m4_cword(AND,and) m4_2op(&)
+m4_cword(OR,or) m4_2op(|)
+m4_cword(XOR,xor) m4_2op(^)
 
-m4_cword(NEGATE,neg) OP1(-)
-m4_cword(INVERT,not) OP1(~)
-m4_cword(1+,inc) OP1(1+)
-m4_cword(1-,dec) OP1(-1+)
+m4_cword(NEGATE,neg) m4_1op(-)
+m4_cword(INVERT,not) m4_1op(~)
+m4_cword(1+,inc) m4_1op(1+)
+m4_cword(1-,dec) m4_1op(-1+)
 
 m4_cword(/MOD,divmod)
 {
@@ -199,33 +208,39 @@ m4_cword(/MOD,divmod)
 	next(ip,sp,rp);
 }
 
-m4_cword(=,eq) OP2(==,-)
-m4_cword(<>,neq) OP2(!=,-)
-m4_cword(>,gt) OP2(>,-)
-m4_cword(>=,gte) OP2(>=,-)
-m4_cword(<,lt) OP2(<,-)
-m4_cword(<=,lte) OP2(<=,-)
+m4_cword(=,eq) m4_2op(==,-)
+m4_cword(<>,neq) m4_2op(!=,-)
+m4_cword(>,gt) m4_2op(>,-)
+m4_cword(>=,gte) m4_2op(>=,-)
+m4_cword(<,lt) m4_2op(<,-)
+m4_cword(<=,lte) m4_2op(<=,-)
 
-m4_cword(U>,ugt) OP2(>,-,u)
-m4_cword(U>=,ugte) OP2(>=,-,u)
-m4_cword(U<,ult) OP2(<,-,u)
-m4_cword(U<=,ulte) OP2(<=,-,u)
+m4_cword(U>,ugt) m4_2op(>,-,u)
+m4_cword(U>=,ugte) m4_2op(>=,-,u)
+m4_cword(U<,ult) m4_2op(<,-,u)
+m4_cword(U<=,ulte) m4_2op(<=,-,u)
 
-m4_cword(0=,zeq) OP1(!,-)
-m4_cword(0<>,zneq) OP1(,-,!=0)
-m4_cword(0>,zgt) OP1(,-,>0)
-m4_cword(0>=,zgte) OP1(,-,>=0)
-m4_cword(0<,zlt) OP1(,-,<0)
-m4_cword(0<=,zlte) OP1(,-,<=0)
+m4_cword(0=,zeq) m4_1op(!,-)
+m4_cword(0<>,zneq) m4_1op(,-,!=0)
+m4_cword(0>,zgt) m4_1op(,-,>0)
+m4_cword(0>=,zgte) m4_1op(,-,>=0)
+m4_cword(0<,zlt) m4_1op(,-,<0)
+m4_cword(0<=,zlte) m4_1op(,-,<=0)
+
+	/* Constants */
+m4_divert(-1)/*
+m4_define(`m4_variable',`m4_dnl
+m4_forthword($1,$2,
+	PL(&$2_defn.xt[3]),P(exit),L($3)
+)
+cell_t *$2_var=(cell_t *)&$2_defn.xt[3];')
+m4_define(`m4_constant',`m4_dnl
+m4_forthword($1,$2,
+	PL($3),P(exit)
+)
+cell_t $2_const=$3;')*/m4_divert(0)m4_dnl
 
 	/* Entry */
-
-#define STACK_SIZE (1<<12)
-#define USER_AREA_SIZE (1<<16)
-cell_t stack[STACK_SIZE];
-cell_t rstack[STACK_SIZE];
-cell_t uarea[USER_AREA_SIZE];
-#define EOS(s) &s[sizeof(s)/sizeof(*s)]
 
 m4_forthword(`1+',oneplus,
 	PL(1),P(add),P(exit)
