@@ -1,4 +1,5 @@
 m4_include(.edit_warning)m4_dnl
+m4_include(cmacros.m4)m4_dnl
 #include "3lib.h"
 
 	/* Data types */
@@ -101,19 +102,6 @@ m4_cword(EXECUTE,execute)
 }
 
 	/* Register manipulation */
-m4_divert(-1)/*
-m4_define(`m4_upcase',`m4_translit(`$*',`[a-z]',`[A-Z]')')
-m4_define(`m4_regops',`
-m4_cword(m4_upcase($1)@,$1fetch)
-{
-	sp[-1]=(cell_t)$1;
-	next(ip,sp-1,rp);
-}
-m4_cword(m4_upcase($1)!,$1store)
-{
-	$1=(cell_t *)sp[0];
-	next(ip,sp+1,rp);
-}')*/m4_divert(0)m4_dnl
 
 m4_regops(ip)
 m4_regops(sp)
@@ -174,15 +162,6 @@ m4_cword(-ROT,unrot)
 }
 
 	/* Arithmetic */
-m4_divert(-1)/*
-m4_define(`m4_1op',`{
-	sp[0]=$2($1sp[0]$3);
-	next(ip,sp,rp);
-}')
-m4_define(`m4_2op',`{
-	sp[1]=$2(($3cell_t)sp[1]$1($3cell_t)sp[0]);
-	next(ip,sp+1,rp);
-}')*/m4_divert(0)m4_dnl
 
 m4_cword(+,add) m4_2op(+)
 m4_cword(-,sub) m4_2op(-)
@@ -228,17 +207,8 @@ m4_cword(0<,zlt) m4_1op(,-,<0)
 m4_cword(0<=,zlte) m4_1op(,-,<=0)
 
 	/* Constants */
-m4_divert(-1)/*
-m4_define(`m4_variable',`m4_dnl
-m4_forthword($1,$2,
-	PL(&$2_defn.xt[3]),P(exit),L($3)
-)
-cell_t *$2_var=(cell_t *)&$2_defn.xt[3];')
-m4_define(`m4_constant',`m4_dnl
-m4_forthword($1,$2,
-	PL($3),P(exit)
-)
-cell_t $2_const=$3;')*/m4_divert(0)m4_dnl
+
+// TODO
 
 	/* Entry */
 
