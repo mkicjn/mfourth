@@ -187,6 +187,8 @@ m4_cword(/MOD,divmod)
 	next(ip,sp,rp);
 }
 
+	/* Comparisons */
+
 m4_cword(=,eq) m4_2op(==,-)
 m4_cword(<>,neq) m4_2op(!=,-)
 m4_cword(>,gt) m4_2op(>,-)
