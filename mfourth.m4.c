@@ -172,10 +172,14 @@ m4_cword(R>,r_from)
 	push(sp,pop(rp));
 	next(ip,sp,rp);
 }
-m4_cword(R@,r_fetch)
+m4_cword(R@,rfetch)
 {
 	push(sp,rp[0]);
 	next(ip,sp,rp);
+}
+m4_cword(RDROP,rdrop)
+{
+	next(ip,sp,rp+1);
 }
 
 	/* Arithmetic */
@@ -304,14 +308,29 @@ m4_forthword(EVALUATE,evaluate,
 	PL(in_ptr),PL(0),P(store),
 	P(exit)
 )
+m4_forthword(ACCEPT,accept,
+	P(to_r),PL(0),
+	m4_BEGIN_AGAIN(`
+		P(dup),P(rfetch),P(gte),m4_IF(`P(nip),P(rdrop),P(exit)'),
+		P(swap),
+		P(rx),P(dup),PL(10),P(eq),m4_IF(`P(drop),P(rdrop),P(exit)'),
+		P(over),P(store),P(incr),P(swap),P(incr)
+	')
+)
 
 	/* Entry */
 
+/*`
 m4_forthword(CR,cr,
 	PL(10),P(tx),P(exit)
 )
 m4_forthword(`',entry,
 	PL(33),m4_BEGIN_WHILE_REPEAT(`P(dup),PL(127),P(lt)',`P(dup),P(tx),P(incr)'),NP(cr),P(bye)
+)
+'*/
+
+m4_forthword(`',entry,
+	PL(tib),PL(TIB_SIZE),NP(accept),P(bye)
 )
 
 void _start(void)
