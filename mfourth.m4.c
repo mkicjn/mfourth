@@ -301,13 +301,6 @@ m4_variable(>IN,in,0)
 m4_forthword(SOURCE,source,
 	PL(&source),P(fetch),PL(&source_len),P(fetch),P(exit)
 )
-m4_forthword(EVALUATE,evaluate,
-	PL(&source_len),P(store),
-	PL(&source),P(store),
-	PL(~0),PL(source_id_ptr),P(store),
-	PL(in_ptr),PL(0),P(store),
-	P(exit)
-)
 m4_forthword(ACCEPT,accept,
 	P(to_r),PL(0),
 	m4_BEGIN_AGAIN(`
