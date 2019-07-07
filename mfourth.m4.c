@@ -160,6 +160,24 @@ m4_cword(-ROT,unrot)
 	next(ip,sp,rp);
 }
 
+	/* Return stack manipulation */
+
+m4_cword(>R,to_r)
+{
+	push(rp,pop(sp));
+	next(ip,sp,rp);
+}
+m4_cword(R>,r_from)
+{
+	push(sp,pop(rp));
+	next(ip,sp,rp);
+}
+m4_cword(R@,r_fetch)
+{
+	push(sp,rp[0]);
+	next(ip,sp,rp);
+}
+
 	/* Arithmetic */
 
 m4_cword(+,add) m4_2op(+)
@@ -184,6 +202,22 @@ m4_cword(/MOD,divmod)
 	sp[1]=a%b;
 	sp[0]=a/b;
 	next(ip,sp,rp);
+}
+
+m4_cword(ABS,abs)
+{
+	sp[0]&=~((ucell_t)1<<(sizeof(cell_t)*8-1));
+	next(ip,sp,rp);
+}
+m4_cword(MAX,max)
+{
+	sp[1]=sp[0]>sp[1]?sp[0]:sp[1];
+	next(ip,sp+1,rp);
+}
+m4_cword(MIN,min)
+{
+	sp[1]=sp[0]<sp[1]?sp[0]:sp[1];
+	next(ip,sp+1,rp);
 }
 
 	/* Comparisons */
@@ -264,12 +298,12 @@ m4_forthword(SOURCE,source,
 	PL(&source),P(fetch),PL(&source_len),P(fetch),P(exit)
 )
 m4_forthword(EVALUATE,evaluate,
-	PL(&source_len),P(store),PL(&source),P(store),
-	PL(source_id_ptr),PL(~0),P(store),PL(in_ptr),PL(0),P(store),
+	PL(&source_len),P(store),
+	PL(&source),P(store),
+	PL(~0),PL(source_id_ptr),P(store),
+	PL(in_ptr),PL(0),P(store),
 	P(exit)
 )
-
-/*TODO: KEY, REFILL, PARSE-WORD, PARSE, WORD*/
 
 	/* Entry */
 
