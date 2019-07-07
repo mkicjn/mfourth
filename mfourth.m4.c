@@ -27,8 +27,8 @@ enum {F_IMM=0x80,F_HID=0x40};
 
 	/* Stacks */
 
-#define STACK_SIZE (1<<12)
-#define USER_AREA_SIZE (1<<16)
+#define STACK_SIZE (1<<10)
+#define USER_AREA_SIZE (1<<12)
 cell_t stack[STACK_SIZE];
 cell_t rstack[STACK_SIZE];
 cell_t uarea[USER_AREA_SIZE];
@@ -290,7 +290,7 @@ m4_forthword(`C,',charcomma,
 
 	/* Parsing */
 
-#define TIB_SIZE 1<<12
+#define TIB_SIZE (1<<10)
 char tib[TIB_SIZE];
 m4_constant(TIB,tib,tib)
 char *source=tib;
@@ -313,7 +313,7 @@ m4_forthword(ACCEPT,accept,
 	m4_BEGIN_AGAIN(`
 		P(dup),P(rfetch),P(gte),m4_IF(`P(nip),P(rdrop),P(exit)'),
 		P(swap),
-		P(rx),P(dup),PL(10),P(eq),m4_IF(`P(drop),P(rdrop),P(exit)'),
+		P(rx),P(dup),PL(10),P(lte),m4_IF(`P(drop),P(rdrop),P(exit)'),
 		P(over),P(store),P(incr),P(swap),P(incr)
 	')
 )

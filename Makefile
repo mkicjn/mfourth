@@ -1,5 +1,5 @@
-CC=clang
-CFLAGS=-ansi -O2 -nostartfiles -Wall -Wextra -Wpedantic
+CC=gcc
+CFLAGS=-ansi -O2 -g -nostartfiles -Wall -Wextra -Wpedantic
 
 ASM=nasm
 ASMFLAGS=-felf64
