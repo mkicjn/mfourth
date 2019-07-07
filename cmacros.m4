@@ -29,7 +29,7 @@ struct {
 };m4_dnl
 m4_define(`m4_last',`&$2_defn.link')m4_dnl
 ')
-m4_define(`L',`(prim_t)(cell_t)$1')
+m4_define(`L',`(prim_t)(cell_t)($1)')
 m4_define(`P',`$1_code')
 m4_define(`C',`($1*sizeof(cell_t))')
 m4_define(`X',`$1_defn.xt')
