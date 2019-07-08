@@ -20,8 +20,19 @@
 	CELL+ @ IMMEDIACY INVERT AND
 ;
 : LINK>XT 3 CELLS + ;
-: FOUND-XT? ( c-addr u -- xt +/-1 | c-addr u 0 )
-	\\\\\\\\\\\\\\\\ TODO
+: FOUND-XT? ( c-addr u -- xt ~0 | c-addr u 0 )
+	LATEST @
+	BEGIN DUP 0<> WHILE
+		>R
+		2DUP R@ LINK>NAME
+		COMPARE 0= IF
+			2DROP
+			R> LINK>XT
+			-1 EXIT
+		THEN
+		R> @
+	REPEAT
+	0
 ;
 : IS-IMMEDIATE? ( xt -- xt IMMEDIACY | xt 0 )
 	DUP 2 CELLS - @
