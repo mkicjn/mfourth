@@ -9,7 +9,7 @@ struct {
 	link_t link;
 	prim_t xt[2];
 } $2_defn = {
-	{m4_last,m4_len(`$1'),"$1"},
+	{m4_last,"`$1'",m4_len(`$1')},
 	{$2_code,exit_code}
 };
 void $2_code(cell_t *ip,cell_t *sp,cell_t *rp)m4_dnl
@@ -23,7 +23,7 @@ struct {
 	link_t link;
 	prim_t xt[m4_eval($#-2)];
 } $2_defn = {
-	{m4_last,m4_len(`$1'),"$1"},
+	{m4_last,"`$1'",m4_len(`$1')},
 	{m4_shift(m4_shift($@))}
 };m4_dnl
 m4_define(`m4_last',`&$2_defn.link')m4_dnl

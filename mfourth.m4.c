@@ -18,8 +18,8 @@ typedef uint16_t ucell_t;
 
 typedef struct link_s {
 	struct link_s *prev;
-	cell_t len;
 	char *name;
+	cell_t len;
 } link_t;
 
 typedef void (*prim_t)(cell_t *,cell_t *,cell_t *);
@@ -215,7 +215,8 @@ m4_cword(/MOD,divmod)
 
 m4_cword(ABS,abs)
 {
-	sp[0]&=~((ucell_t)1<<(sizeof(cell_t)*8-1));
+	if (sp[0]<0)
+		sp[0]=-sp[0];
 	next(ip,sp,rp);
 }
 m4_cword(MAX,max)
@@ -275,6 +276,7 @@ m4_cword(+!,addstore)
 	*(cell_t *)sp[0]+=sp[1];
 	next(ip,sp+2,rp);
 }
+
 m4_cword(C@,charfetch)
 {
 	sp[0]=*(char *)sp[0];
@@ -284,6 +286,17 @@ m4_cword(C!,charstore)
 {
 	*(char *)sp[0]=(char)sp[1];
 	next(ip,sp+2,rp);
+}
+
+m4_cword(CELL+,cell_add)
+{
+	sp[0]+=sizeof(cell_t);
+	next(ip,sp,rp);
+}
+m4_cword(CELLS,cells)
+{
+	sp[0]*=sizeof(cell_t);
+	next(ip,sp,rp);
 }
 
 m4_forthword(HERE,here,
@@ -304,7 +317,7 @@ m4_forthword(`C,',charcomma,
 #define TIB_SIZE (1<<10)
 char tib[TIB_SIZE];
 m4_constant(TIB,tib,tib)
-m4_constant(``/TIB'',per_tib,TIB_SIZE)
+m4_constant(/TIB,per_tib,TIB_SIZE)
 m4_variable(SOURCE&,source_addr,tib);
 m4_variable(``SOURCE#'',source_len,0);
 m4_variable(>IN,in,0)
@@ -328,45 +341,6 @@ m4_forthword(ACCEPT,accept,
 		P(over),P(store),P(incr),P(swap),P(incr)
 	')
 )
-
-/*`
-	( Some plans for the near future )
-: INTERPRET
-	BEGIN
-		PARSE-NAME
-		DUP
-	WHILE
-		INTERPRET-NAME
-	REPEAT
-	2DROP
-;
-: EVALUATE
-	SOURCE >IN @
-	>R >R >R
-	SOURCE! 0 >IN !
-	INTERPRET
-	R> R> R>
-	>IN ! SOURCE!
-;
-: REFILL
-	SOURCE-ID IF
-		0 EXIT
-	THEN 
-	TIB /TIB ACCEPT
-	SOURCE# !
-	DROP
-	-1
-;
-: QUIT
-	R0 RP!
-	BEGIN
-		INTERPRET
-		REFILL
-	AGAIN
-;
-: ABORT S0 SP! QUIT ;
-	( The entry word could later be set to ABORT )
-'*/
 
 	/* Entry */
 

@@ -1,0 +1,90 @@
+: COMPILE,
+	DUP CELL+ @
+	[ ' EXIT @ ] LITERAL = IF
+		@ , EXIT
+	THEN
+	[ ' DOCOL @ ] LITERAL , ,
+		
+: REFILL
+	SOURCE-ID IF
+		0 EXIT
+	THEN 
+	TIB /TIB ACCEPT
+	SOURCE# !
+	DROP
+	-1
+;
+1 CELL 3 LSHIFT 1- LSHIFT CONSTANT IMMEDIACY
+: LINK>NAME ( link -- c-addr u )
+	CELL+ DUP @ SWAP
+	CELL+ @ IMMEDIACY INVERT AND
+;
+: LINK>XT 3 CELLS + ;
+: FOUND-XT? ( c-addr u -- xt +/-1 | c-addr u 0 )
+	\\\\\\\\\\\\\\\\ TODO
+;
+: IS-IMMEDIATE? ( xt -- xt IMMEDIACY | xt 0 )
+	DUP 2 CELLS - @
+	IMMEDIACY AND
+;
+: HANDLE-XT
+	STATE @ IF
+		IS-IMMEDIATE? IF
+			EXECUTE
+		ELSE
+			COMPILE,
+		THEN
+	ELSE
+		EXECUTE
+	THEN
+;
+: IS-NUMBER? ( c-addr u -- n ~0 | c-addr u 0 )
+	2DUP 0 -ROT
+	>NUMBER NIP IF
+		DROP
+		0 EXIT
+	ELSE
+	NIP NIP -1
+;
+: HANDLE-#
+	STATE @ IF
+		POSTPONE LITERAL
+	THEN
+;
+: INTERPRET-NAME ( c-addr u -- n ~0 | c-addr u 0 )
+	FOUND-XT? IF
+		HANDLE-XT
+		EXIT
+	THEN
+	IS-NUMBER? IF
+		HANDLE-#
+		EXIT
+	THEN
+	TYPE [CHAR] ? EMIT CR
+	ABORT
+;
+: INTERPRET
+	BEGIN
+		PARSE-NAME
+		DUP
+	WHILE
+		INTERPRET-NAME
+	REPEAT
+	2DROP
+;
+: EVALUATE
+	SOURCE >IN @
+	>R >R >R
+	SOURCE! 0 >IN !
+	INTERPRET
+	R> R> R>
+	>IN ! SOURCE!
+;
+: QUIT
+	R0 RP!
+	BEGIN
+		REFILL
+		INTERPRET
+	AGAIN
+;
+: ABORT S0 SP! QUIT ;
