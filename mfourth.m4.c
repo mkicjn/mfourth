@@ -23,7 +23,6 @@ typedef struct link_s {
 } link_t;
 
 typedef void (*prim_t)(cell_t *,cell_t *,cell_t *);
-enum {F_IMM=0x80,F_HID=0x40};
 
 	/* Stacks */
 
@@ -33,6 +32,9 @@ cell_t stack[STACK_SIZE];
 cell_t rstack[STACK_SIZE];
 cell_t uarea[USER_AREA_SIZE];
 #define EOS(s) &s[sizeof(s)/sizeof(*s)]
+/*`m4_constant(S0,s_naught,EOS(stack))
+m4_constant(R0,r_naught,EOS(rstack))
+m4_constant(D0,d_naught,uarea)'*/
 
 	/* Kernel structure */
 
@@ -159,6 +161,12 @@ m4_cword(-ROT,unrot)
 	sp[0]=b;
 	next(ip,sp,rp);
 }
+
+m4_cword(2DROP,ddrop)
+{
+	next(ip,sp+2,rp);
+}
+/* TODO: More double-cell words */
 
 	/* Return stack manipulation */
 
@@ -293,13 +301,19 @@ m4_forthword(`C,',charcomma,
 #define TIB_SIZE (1<<10)
 char tib[TIB_SIZE];
 m4_constant(TIB,tib,tib)
-char *source=tib;
-cell_t source_len=0;
-m4_constant(SOURCE-ID,source_id,0)
+m4_constant(``/TIB'',per_tib,TIB_SIZE)
+m4_variable(SOURCE&,source_addr,tib);
+m4_variable(``SOURCE#'',source_len,0);
 m4_variable(>IN,in,0)
 
 m4_forthword(SOURCE,source,
-	PL(&source),P(fetch),PL(&source_len),P(fetch),P(exit)
+	NP(source_addr),P(fetch),NP(source_len),P(fetch),P(exit)
+)
+m4_forthword(SOURCE!,sourcestore,
+	NP(source_len),P(store),NP(source_addr),P(store),P(exit)
+)
+m4_forthword(SOURCE-ID,source_id,
+	NP(source_addr),P(fetch),NP(tib),P(eq),P(exit)
 )
 m4_forthword(ACCEPT,accept,
 	P(to_r),PL(0),
@@ -310,6 +324,45 @@ m4_forthword(ACCEPT,accept,
 		P(over),P(store),P(incr),P(swap),P(incr)
 	')
 )
+
+/*`
+	( Some plans for the near future )
+: INTERPRET
+	BEGIN
+		PARSE-NAME
+		DUP
+	WHILE
+		INTERPRET-NAME
+	REPEAT
+	2DROP
+;
+: EVALUATE
+	SOURCE >IN @
+	>R >R >R
+	SOURCE! 0 >IN !
+	INTERPRET
+	R> R> R>
+	>IN ! SOURCE!
+;
+: REFILL
+	SOURCE-ID IF
+		0 EXIT
+	THEN 
+	TIB /TIB ACCEPT
+	SOURCE# !
+	DROP
+	-1
+;
+: QUIT
+	R0 RP!
+	BEGIN
+		INTERPRET
+		REFILL
+	AGAIN
+;
+: ABORT S0 SP! QUIT ;
+	( The entry word could later be set to ABORT )
+'*/
 
 	/* Entry */
 

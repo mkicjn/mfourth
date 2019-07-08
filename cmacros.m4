@@ -3,14 +3,13 @@ m4_divert(-1)
 	Primitive word definition
 
 m4_define(`m4_last',`((void *)0)')
-m4_define(`m4_cs',`m4_format("\%03o%s",m4_len(`$1'),``$1'')')
 m4_define(`m4_cword',`m4_dnl
 void $2_code();
 struct {
 	link_t link;
 	prim_t xt[2];
 } $2_defn = {
-	{m4_last,m4_len(`$1'),m4_cs(`$1')},
+	{m4_last,m4_len(`$1'),"$1"},
 	{$2_code,exit_code}
 };
 void $2_code(cell_t *ip,cell_t *sp,cell_t *rp)m4_dnl
@@ -24,7 +23,7 @@ struct {
 	link_t link;
 	prim_t xt[m4_eval($#-2)];
 } $2_defn = {
-	{m4_last,m4_len(`$1'),m4_cs(`$1')},
+	{m4_last,m4_len(`$1'),"$1"},
 	{m4_shift(m4_shift($@))}
 };m4_dnl
 m4_define(`m4_last',`&$2_defn.link')m4_dnl
