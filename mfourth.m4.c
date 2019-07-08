@@ -32,9 +32,6 @@ cell_t stack[STACK_SIZE];
 cell_t rstack[STACK_SIZE];
 cell_t uarea[USER_AREA_SIZE];
 #define EOS(s) &s[sizeof(s)/sizeof(*s)]
-/*`m4_constant(S0,s_naught,EOS(stack))
-m4_constant(R0,r_naught,EOS(rstack))
-m4_constant(D0,d_naught,uarea)'*/
 
 	/* Kernel structure */
 
@@ -253,10 +250,13 @@ m4_cword(0>=,zgte) m4_1op(,-,>=0)
 m4_cword(0<,zlt) m4_1op(,-,<0)
 m4_cword(0<=,zlte) m4_1op(,-,<=0)
 
-	/* Constants */
+	/* Miscellaneous constants/variables */
 
 m4_constant(CELL,cell,sizeof(cell_t))
-m4_variable(HERE,here,uarea)
+m4_constant(S0,s_naught,EOS(stack))
+m4_constant(R0,r_naught,EOS(rstack))
+m4_constant(D0,d_naught,uarea)
+m4_variable(DP,dp,uarea)
 
 	/* Memory access */
 
@@ -286,8 +286,11 @@ m4_cword(C!,charstore)
 	next(ip,sp+2,rp);
 }
 
+m4_forthword(HERE,here,
+	NP(dp),P(fetch),P(exit)
+)
 m4_forthword(ALLOT,allot,
-	PL(here_ptr),P(addstore),P(exit)
+	NP(dp),P(addstore),P(exit)
 )
 m4_forthword(`,',comma,
 	NP(here),P(store),NP(cell),NP(allot),P(exit)
@@ -305,6 +308,7 @@ m4_constant(``/TIB'',per_tib,TIB_SIZE)
 m4_variable(SOURCE&,source_addr,tib);
 m4_variable(``SOURCE#'',source_len,0);
 m4_variable(>IN,in,0)
+
 
 m4_forthword(SOURCE,source,
 	NP(source_addr),P(fetch),NP(source_len),P(fetch),P(exit)
