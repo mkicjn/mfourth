@@ -29,9 +29,10 @@ struct {
 	{m4_shift(m4_shift($@))}
 };m4_dnl
 m4_define(`m4_last',`&$2_defn.link')m4_dnl
-m4_define(m4_upcase($2),`DOCOL,(prim_t)(cell_t)&$2_defn.xt')m4_dnl
+m4_define(m4_upcase($2),`DOCOL,LIT(XT($2))')m4_dnl
 ')
 m4_define(`LIT',`(prim_t)(cell_t)($1)')
+m4_define(`XT',`(&$1_defn.xt)')
 m4_define(`PUSH',`DOLIT,LIT($1)')
 
 	Register operations

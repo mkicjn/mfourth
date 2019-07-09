@@ -353,8 +353,6 @@ m4_forthword(`ACCEPT',accept,
 	')
 )
 
-	/* Testing area */
-
 m4_forthword(`REFILL',refill,
 	SOURCE_ID,m4_IF(`
 		PUSH(0),EXIT
@@ -365,6 +363,7 @@ m4_forthword(`REFILL',refill,
 	PUSH(-1),
 	EXIT
 )
+
 m4_forthword(`COMPARE-#',compare_n,
 	m4_BEGIN_WHILE_REPEAT(`DUP,ZGTE',`
 		TO_R,
@@ -394,17 +393,63 @@ m4_forthword(`COMPARE',compare,
 	EXIT
 )
 
+m4_forthword(`/STRING',shift_string,
+	TO_R,SWAP,RFETCH,ADD,SWAP,R_FROM,SUB,EXIT
+)
+m4_forthword(`TYPE',type,
+	m4_BEGIN_WHILE_REPEAT(`DUP,ZGT',`
+		OVER,CHARFETCH,EMIT,
+		PUSH(1),SHIFT_STRING
+	'),
+	EXIT
+)
+
+m4_constant(`BL',bl,32)
+m4_forthword(`SPACE',space,
+	BL,EMIT,EXIT
+)
+m4_forthword(`CR',cr,
+	PUSH(10),EMIT,EXIT
+)
+
+	/* Testing area */
+
+m4_forthword(`SKIP-UNTIL',skip_until,
+	TO_R,
+	m4_BEGIN_AGAIN(`
+		DUP,ZLTE,m4_IF(`RDROP,EXIT'),
+		OVER,CHARFETCH,RFETCH,EXECUTE,m4_IF(`RDROP,EXIT'),
+		PUSH(1),SHIFT_STRING
+	'),
+	EXIT
+)
+m4_forthword(`WHITESPACE',whitespace,
+	BL,LTE,EXIT
+)
+m4_forthword(`NOT-WHITESPACE',not_whitespace,
+	BL,GT,EXIT
+)
+m4_forthword(`PARSE-NAME',parse_name,
+	SOURCE,IN,FETCH,SHIFT_STRING,
+	PUSH(XT(not_whitespace)),SKIP_UNTIL,
+	DDUP,
+	PUSH(XT(whitespace)),SKIP_UNTIL,
+	NIP,SUB,
+	DDUP,ADD,SOURCE_ADDR,FETCH,SUB,IN,STORE,
+	EXIT
+)
+
+
 m4_forthword(`',entry,
-	REFILL,DROP,SOURCE,
-	PUSH("abcd"),PUSH(4),
-	COMPARE,
-	PUSH(124),ADD,EMIT,
+	REFILL,DROP,
+	PARSE_NAME,
+	TYPE,CR,
 	BYE
 )
 
 void _start(void)
 {
-	next((cell_t *)&entry_defn.xt,EOS(stack),EOS(rstack));
+	next((cell_t *)XT(entry),EOS(stack),EOS(rstack));
 	bye();
 }
 m4_include(.edit_warning)m4_dnl
