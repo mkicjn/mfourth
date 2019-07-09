@@ -43,7 +43,6 @@ void next(cell_t *ip,cell_t *sp,cell_t *rp)
 	(*(prim_t *)ip)(ip+1,sp,rp);
 }
 
-/*see word.m4 for macro definitions*/
 m4_cword(EXIT,exit)
 {
 	ip=(cell_t *)pop(rp);
@@ -336,20 +335,36 @@ m4_forthword(SOURCE!,sourcestore,
 	NP(source_len),P(store),NP(source_addr),P(store),P(exit)
 )
 m4_forthword(SOURCE-ID,source_id,
-	NP(source_addr),P(fetch),NP(tib),P(eq),P(exit)
+	NP(source_addr),P(fetch),NP(tib),P(neq),P(exit)
 )
 m4_forthword(ACCEPT,accept,
 	P(to_r),PL(0),
 	m4_BEGIN_AGAIN(`
-		P(dup),P(rfetch),P(gte),m4_IF(`P(nip),P(rdrop),P(exit)'),
+		P(dup),P(rfetch),P(gte),m4_IF(`
+			P(nip),P(rdrop),
+			P(exit)
+		'),
 		P(swap),
-		P(rx),P(dup),PL(10),P(lte),m4_IF(`P(drop),P(rdrop),P(exit)'),
+		P(rx),P(dup),PL(10),P(eq),m4_IF(`
+			P(ddrop),P(rdrop),
+			P(exit)
+		'),
 		P(over),P(store),P(incr),P(swap),P(incr)
 	')
 )
 
 	/* Testing area */
 
+m4_forthword(REFILL,refill,
+	NP(source_id),m4_IF(`
+		PL(0),P(exit)
+	'),
+	NP(tib),NP(per_tib),NP(accept),
+	NP(source_len),P(store),
+	PL(0),NP(in),P(store),
+	PL(-1),
+	P(exit)
+)
 m4_forthword(`COMPARE-#',compare_n,
 	m4_BEGIN_WHILE_REPEAT(`P(dup),P(zgte)',`
 		P(to_r),
@@ -380,7 +395,11 @@ m4_forthword(COMPARE,compare,
 )
 
 m4_forthword(`',entry,
-	PL("abc"),PL(3),PL("ac"),PL(2),NP(compare),PL(124),P(add),P(tx),P(bye)
+	NP(refill),P(drop),NP(source),
+	PL("abcd"),PL(4),
+	NP(compare),
+	PL(124),P(add),P(tx),
+	P(bye)
 )
 
 void _start(void)
