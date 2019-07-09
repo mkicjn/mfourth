@@ -163,6 +163,12 @@ m4_cword(2DROP,ddrop)
 {
 	next(ip,sp+2,rp);
 }
+m4_cword(2DUP,ddup)
+{
+	sp[-1]=sp[1];
+	sp[-2]=sp[0];
+	next(ip,sp-2,rp);
+}
 /* TODO: More double-cell words */
 
 	/* Return stack manipulation */
@@ -342,19 +348,39 @@ m4_forthword(ACCEPT,accept,
 	')
 )
 
-	/* Entry */
+	/* Testing area */
 
-/*`
-m4_forthword(CR,cr,
-	PL(10),P(tx),P(exit)
+m4_forthword(`COMPARE-#',compare_n,
+	m4_BEGIN_WHILE_REPEAT(`P(dup),P(zgte)',`
+		P(to_r),
+		P(over),P(charfetch),P(over),P(charfetch),P(sub),
+		PL(1),P(min),PL(-1),P(max),
+		P(dup),P(zneq),m4_IF(`
+			P(rdrop),P(nip),P(nip),P(exit)
+		'),
+		P(drop),
+		P(incr),P(swap),P(incr),P(swap),
+		P(r_from),P(decr)
+	'),
+	P(ddrop),
+	PL(0),P(exit)
 )
-m4_forthword(`',entry,
-	PL(33),m4_BEGIN_WHILE_REPEAT(`P(dup),PL(127),P(lt)',`P(dup),P(tx),P(incr)'),NP(cr),P(bye)
+m4_forthword(COMPARE,compare,
+	P(rot),P(swap),
+	P(ddup),P(min),
+	P(unrot),P(to_r),P(to_r),
+	NP(compare_n),
+	P(dup),m4_IF(`
+		P(rdrop),P(rdrop),
+		P(exit)
+	'),
+	P(r_from),P(r_from),P(sub),
+	PL(1),P(min),PL(-1),P(max),
+	P(exit)
 )
-'*/
 
 m4_forthword(`',entry,
-	PL(tib),PL(TIB_SIZE),NP(accept),P(bye)
+	PL("abc"),PL(3),PL("ac"),PL(2),NP(compare),PL(124),P(add),P(tx),P(bye)
 )
 
 void _start(void)
