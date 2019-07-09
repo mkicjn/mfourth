@@ -2,6 +2,7 @@ m4_divert(-1)
 
 	Primitive word definition
 
+m4_define(`m4_upcase',`m4_translit(`$*',`[a-z]',`[A-Z]')')
 m4_define(`m4_last',`((void *)0)')
 m4_define(`m4_cword',`m4_dnl
 void $2_code();
@@ -12,8 +13,9 @@ struct {
 	{m4_last,"`$1'",m4_len(`$1')},
 	{$2_code,exit_code}
 };
-void $2_code(cell_t *ip,cell_t *sp,cell_t *rp)m4_dnl
 m4_define(`m4_last',`&$2_defn.link')m4_dnl
+m4_define(m4_upcase($2),`$2_code')m4_dnl
+void $2_code(cell_t *ip,cell_t *sp,cell_t *rp)m4_dnl
 ')
 
 	Non-primitive word definition
@@ -27,17 +29,13 @@ struct {
 	{m4_shift(m4_shift($@))}
 };m4_dnl
 m4_define(`m4_last',`&$2_defn.link')m4_dnl
+m4_define(m4_upcase($2),`DOCOL,(prim_t)(cell_t)&$2_defn.xt')m4_dnl
 ')
-m4_define(`L',`(prim_t)(cell_t)($1)')
-m4_define(`P',`$1_code')
-m4_define(`C',`($1*sizeof(cell_t))')
-m4_define(`X',`$1_defn.xt')
-m4_define(`NP',`P(docol),L(X($1))')
-m4_define(`PL',`P(dolit),L($1)')
+m4_define(`LIT',`(prim_t)(cell_t)($1)')
+m4_define(`PUSH',`DOLIT,LIT($1)')
 
 	Register operations
 
-m4_define(`m4_upcase',`m4_translit(`$*',`[a-z]',`[A-Z]')')
 m4_define(`m4_regops',`
 m4_cword(m4_upcase($1)@,$1fetch)
 {
@@ -65,12 +63,12 @@ m4_define(`m4_2op',`{
 
 m4_define(`m4_variable',`m4_dnl
 m4_forthword($1,$2,
-	PL(&$2_defn.xt[3]),P(exit),L($3)
+	PUSH(&$2_defn.xt[3]),EXIT,LIT($3)
 )
 #define $2_ptr (&$2_defn.xt[3])')
 m4_define(`m4_constant',`m4_dnl
 m4_forthword($1,$2,
-	PL($3),P(exit)
+	PUSH($3),EXIT
 )
 #define $2_ptr (&$2_defn.xt[1])')
 
@@ -79,20 +77,20 @@ m4_forthword($1,$2,
 m4_define(`m4_count',`$#')
 m4_define(`m4_expand',`$@')
 m4_define(`m4_IF',`
-	P(zbranch),L(C(m4_eval(m4_count(m4_expand($1))+1))),m4_expand($1)
+	ZBRANCH,LIT(m4_eval(m4_count(m4_expand($1))+1)*sizeof(cell_t)),m4_expand($1)
 	')
 m4_define(`m4_IF_ELSE',`
-	P(zbranch),L(C(m4_eval(m4_count(m4_expand($1))+3))),m4_expand($1),
-	P(branch),L(C(m4_eval(m4_count(m4_expand($2))+1))),m4_expand($2)
+	ZBRANCH,LIT(m4_eval(m4_count(m4_expand($1))+3)*sizeof(cell_t)),m4_expand($1),
+	BRANCH,LIT(m4_eval(m4_count(m4_expand($2))+1)*sizeof(cell_t)),m4_expand($2)
 	')
 m4_define(`m4_BEGIN_AGAIN',`
-	m4_expand($1),P(branch),L(C(m4_eval(-m4_count(m4_expand($1))-1)))
+	m4_expand($1),BRANCH,LIT(m4_eval(-m4_count(m4_expand($1))-1)*sizeof(cell_t))
 	')
 m4_define(`m4_BEGIN_UNTIL',`
-	m4_expand($1),P(zbranch),L(C(m4_eval(-m4_count(m4_expand($1))-1)))
+	m4_expand($1),ZBRANCH,LIT(m4_eval(-m4_count(m4_expand($1))-1)*sizeof(cell_t))
 	')
 m4_define(`m4_BEGIN_WHILE_REPEAT',`
-	m4_expand($1),P(zbranch),L(C(m4_eval(m4_count(m4_expand($2))+3))),
-	m4_expand($2),P(branch),L(C(m4_eval(-m4_count(m4_expand($1,$2))-3)))
+	m4_expand($1),ZBRANCH,LIT(m4_eval(m4_count(m4_expand($2))+3)*sizeof(cell_t)),
+	m4_expand($2),BRANCH,LIT(m4_eval(-m4_count(m4_expand($1,$2))-3)*sizeof(cell_t))
 	')
 m4_divert(0)m4_dnl
