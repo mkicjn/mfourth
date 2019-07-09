@@ -94,24 +94,22 @@
 : /STRING ( c-addr u n -- c-addr+n u-n )
 	>R SWAP R@ + SWAP R> -
 ;
-: SKIP-WHITESPACE ( c-addr u -- c-addr u )
+: SKIP-UNTIL ( c-addr u xt( char -- flag )  -- c-addr u )
+	>R
 	BEGIN
-		DUP 0<= IF EXIT THEN
-		OVER C@ BL > IF EXIT THEN
+		DUP 0<= IF RDROP EXIT THEN
+		OVER C@ R@ EXECUTE IF RDROP EXIT THEN
 		1 /STRING
 	AGAIN
 ;
-: SKIP-TO-WHITESPACE ( c-addr u -- c-addr u )
-	BEGIN
-		DUP 0<= IF EXIT THEN
-		OVER C@ BL <= IF EXIT THEN
-		1 /STRING
-	AGAIN
-;
+32 CONSTANT BL
+: WHITESPACE BL <= ;
+: NOT-WHITESPACE BL > ;
 : PARSE-NAME ( -- c-addr u )
 	SOURCE >IN @ /STRING
-	SKIP-WHITESPACE
-	2DUP SKIP-TO-WHITESPACE
+	['] WHITESPACE SKIP-UNTIL
+	2DUP
+	['] NOT-WHITESPACE SKIP-UNTIL
 	NIP -
 	2DUP + TIB - >IN !
 ;
