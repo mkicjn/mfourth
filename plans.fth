@@ -91,6 +91,30 @@
 		POSTPONE LITERAL
 	THEN
 ;
+: /STRING ( c-addr u n -- c-addr+n u-n )
+	>R SWAP R@ + SWAP R> -
+;
+: SKIP-WHITESPACE ( c-addr u -- c-addr u )
+	BEGIN
+		DUP 0<= IF EXIT THEN
+		OVER C@ BL > IF EXIT THEN
+		1 /STRING
+	AGAIN
+;
+: SKIP-TO-WHITESPACE ( c-addr u -- c-addr u )
+	BEGIN
+		DUP 0<= IF EXIT THEN
+		OVER C@ BL <= IF EXIT THEN
+		1 /STRING
+	AGAIN
+;
+: PARSE-NAME ( -- c-addr u )
+	SOURCE >IN @ /STRING
+	SKIP-WHITESPACE
+	2DUP SKIP-TO-WHITESPACE
+	NIP -
+	2DUP + TIB - >IN !
+;
 : INTERPRET-NAME ( c-addr u -- n ~0 | c-addr u 0 )
 	FOUND-XT? IF
 		HANDLE-XT
