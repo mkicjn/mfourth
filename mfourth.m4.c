@@ -442,8 +442,9 @@ m4_forthword(`PARSE-NAME',parse_name,
 
 m4_forthword(`',entry,
 	REFILL,DROP,
-	PARSE_NAME,
-	TYPE,CR,
+	m4_BEGIN_WHILE_REPEAT(`PARSE_NAME,DUP',`
+		TYPE,CR
+	'),
 	BYE
 )
 
