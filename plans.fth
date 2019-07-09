@@ -111,7 +111,7 @@
 	2DUP
 	['] NOT-WHITESPACE SKIP-UNTIL
 	NIP -
-	2DUP + TIB - >IN !
+	2DUP + SOURCE& @ - >IN !
 ;
 : INTERPRET-NAME ( c-addr u -- n ~0 | c-addr u 0 )
 	FOUND-XT? IF
