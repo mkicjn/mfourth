@@ -63,11 +63,11 @@
 	REPEAT
 	0
 ;
-: IS-IMMEDIATE? ( xt -- xt IMMEDIACY | xt 0 )
+: IS-IMMEDIATE? ( xt -- xt flag )
 	DUP 2 CELLS - @
 	IMMEDIACY AND
 ;
-: HANDLE-XT
+: HANDLE-XT ( xt -- )
 	STATE @ IF
 		IS-IMMEDIATE? IF
 			EXECUTE
@@ -127,15 +127,27 @@
 	RDROP R> IF NEGATE THEN
 	-ROT
 ;
+: >CHAR ( c-addr u -- c-addr u 0 | char ~0 )
+	>R
+	DUP C@ [CHAR] ' = OVER 2 + C@ [CHAR] ' = AND IF
+		1+ C@
+		RDROP -1
+	ELSE
+		R> 0
+	THEN
+;
 : IS-NUMBER? ( c-addr u -- n ~0 | c-addr u 0 )
+	>CHAR IF -1 EXIT THEN
 	2DUP 0 -ROT
 	>NUMBER NIP IF
 		DROP
-		0 EXIT
+		0
 	ELSE
-	NIP NIP -1
+		NIP NIP
+		-1
+	THEN
 ;
-: HANDLE-#
+: HANDLE-# ( n -- )
 	STATE @ IF
 		POSTPONE LITERAL
 	THEN
@@ -143,7 +155,7 @@
 : /STRING ( c-addr u n -- c-addr+n u-n )
 	>R SWAP R@ + SWAP R> -
 ;
-: SKIP-UNTIL ( c-addr u xt( char -- flag )  -- c-addr u )
+: SKIP-UNTIL ( c-addr u xt -- c-addr u )
 	>R
 	BEGIN
 		DUP 0<= IF RDROP EXIT THEN
