@@ -158,18 +158,6 @@ m4_cword(`-ROT',unrot)
 	next(ip,sp,rp);
 }
 
-m4_cword(`2DROP',ddrop)
-{
-	next(ip,sp+2,rp);
-}
-m4_cword(`2DUP',ddup)
-{
-	sp[-1]=sp[1];
-	sp[-2]=sp[0];
-	next(ip,sp-2,rp);
-}
-/* TODO: More double-cell words */
-
 	/* Return stack manipulation */
 
 m4_cword(`>R',to_r)
@@ -191,6 +179,26 @@ m4_cword(`RDROP',rdrop)
 {
 	next(ip,sp,rp+1);
 }
+
+	/* Double-cell manipulation */
+
+m4_cword(`2DROP',ddrop)
+{
+	next(ip,sp+2,rp);
+}
+m4_cword(`2DUP',ddup)
+{
+	sp[-1]=sp[1];
+	sp[-2]=sp[0];
+	next(ip,sp-2,rp);
+}
+m4_cword(`2>R',two_to_r)
+{
+	rp[-1]=sp[1];
+	rp[-2]=sp[0];
+	next(ip,sp+2,rp-2);
+}
+/* TODO: More double-cell words */
 
 	/* Arithmetic */
 
