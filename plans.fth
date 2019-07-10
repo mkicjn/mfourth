@@ -78,6 +78,55 @@
 		EXECUTE
 	THEN
 ;
+: EXTRACT OVER C@ >R 1 /STRING R> ;
+: DIGIT ( char -- val )
+	[CHAR] 0 -
+	DUP 0 < IF
+		EXIT
+	ELSE DUP 10 > IF
+		[ CHAR A CHAR 0 - 10 - ] LITERAL -
+	ELSE
+		EXIT
+	THEN THEN
+	DUP 0 < IF
+		EXIT
+	ELSE DUP 35 > IF
+		[ CHAR a CHAR A - ] LITERAL -
+	ELSE
+		EXIT
+	THEN THEN
+;
+: >BASE ( c-addr u -- c-addr2 u2 base )
+	OVER C@ CASE
+		[CHAR] $ OF 1 /STRING 16 ENDOF
+		[CHAR] # OF 1 /STRING 10 ENDOF
+		[CHAR] % OF 1 /STRING 2 ENDOF
+		BASE @ SWAP
+	ENDCASE
+;
+: >SIGN ( c-addr u -- c-addr2 u2 sign )
+	OVER C@ [CHAR] - = DUP IF
+		>R 1 /STRING R>
+	THEN
+;
+: >NUMBER ( n c-addr u -- n c-addr u )
+	>BASE >R
+	>SIGN R> 2>R
+	BEGIN
+		DUP 0>
+	WHILE
+		EXTRACT DIGIT
+		DUP 0< OVER R@ > OR IF
+			DROP
+			RDROP RDROP
+			EXIT
+		THEN
+		>R ROT R> SWAP R@ * + -ROT
+	REPEAT
+	ROT
+	RDROP R> IF NEGATE THEN
+	-ROT
+;
 : IS-NUMBER? ( c-addr u -- n ~0 | c-addr u 0 )
 	2DUP 0 -ROT
 	>NUMBER NIP IF
