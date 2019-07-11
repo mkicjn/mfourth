@@ -130,10 +130,8 @@ m4_cword(`SWAP',swap)
 }
 m4_cword(`ROT',rot)
 {
-	register cell_t c=sp[2],b=sp[1],a=sp[0];
-	sp[2]=b;
-	sp[1]=a;
-	sp[0]=c;
+	swap(cell_t,sp[2],sp[1]);
+	swap(cell_t,sp[1],sp[0]);
 	next(ip,sp,rp);
 }
 
@@ -144,10 +142,8 @@ m4_cword(`NIP',nip)
 }
 m4_cword(`TUCK',tuck)
 {
-	register cell_t b=sp[1],a=sp[0];
-	sp[1]=a;
-	sp[0]=b;
-	sp[-1]=a;
+	swap(cell_t,sp[0],sp[1]);
+	sp[-1]=sp[1];
 	next(ip,sp-1,rp);
 }
 m4_cword(`OVER',over)
@@ -157,10 +153,8 @@ m4_cword(`OVER',over)
 }
 m4_cword(`-ROT',unrot)
 {
-	register cell_t c=sp[2],b=sp[1],a=sp[0];
-	sp[2]=a;
-	sp[1]=c;
-	sp[0]=b;
+	swap(cell_t,sp[0],sp[1]);
+	swap(cell_t,sp[1],sp[2]);
 	next(ip,sp,rp);
 }
 
@@ -231,27 +225,27 @@ m4_cword(`MIN',min)
 
 	/* Double-cell manipulation */
 
-m4_cword(`2DROP',two_drop)
-{
-	next(ip,sp+2,rp);
-}
 m4_cword(`2DUP',two_dup)
 {
 	sp[-1]=sp[1];
 	sp[-2]=sp[0];
 	next(ip,sp-2,rp);
 }
-m4_cword(`2OVER',two_over)
+m4_cword(`2DROP',two_drop)
 {
-	sp[-1]=sp[3];
-	sp[-2]=sp[2];
-	next(ip,sp-2,rp);
+	next(ip,sp+2,rp);
 }
 m4_cword(`2SWAP',two_swap)
 {
 	swap(cell_t,sp[0],sp[2]);
 	swap(cell_t,sp[1],sp[3]);
 	next(ip,sp,rp);
+}
+m4_cword(`2OVER',two_over)
+{
+	sp[-1]=sp[3];
+	sp[-2]=sp[2];
+	next(ip,sp-2,rp);
 }
 m4_cword(`2>R',two_to_r)
 {
