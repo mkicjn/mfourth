@@ -231,17 +231,23 @@ m4_cword(`MIN',min)
 
 	/* Double-cell manipulation */
 
-m4_cword(`2DROP',ddrop)
+m4_cword(`2DROP',two_drop)
 {
 	next(ip,sp+2,rp);
 }
-m4_cword(`2DUP',ddup)
+m4_cword(`2DUP',two_dup)
 {
 	sp[-1]=sp[1];
 	sp[-2]=sp[0];
 	next(ip,sp-2,rp);
 }
-m4_cword(`2SWAP',dswap)
+m4_cword(`2OVER',two_over)
+{
+	sp[-1]=sp[3];
+	sp[-2]=sp[2];
+	next(ip,sp-2,rp);
+}
+m4_cword(`2SWAP',two_swap)
 {
 	swap(cell_t,sp[0],sp[2]);
 	swap(cell_t,sp[1],sp[3]);
@@ -257,9 +263,9 @@ m4_cword(`2>R',two_to_r)
 
 	/* Double/Mixed-width Arithmetic */
 
-m4_cword(`UM*',um_mul)
+m4_cword(`M*',m_mul)
 {
-	udcell_t p=sp[1]*sp[0];
+	dcell_t p=sp[1]*sp[0];
 	sp[1]=p;
 	sp[0]=p>>(sizeof(cell_t)*8);
 	next(ip,sp,rp);
@@ -385,7 +391,7 @@ m4_forthword(`ACCEPT',accept,
 		'),
 		SWAP,
 		KEY,DUP,PUSH(10),EQ,m4_IF(`
-			DDROP,RDROP,
+			TWO_DROP,RDROP,
 			EXIT
 		'),
 		OVER,STORE,INCR,SWAP,INCR
@@ -415,12 +421,12 @@ m4_forthword(`COMPARE-#',compare_n,
 		INCR,SWAP,INCR,SWAP,
 		R_FROM,DECR
 	'),
-	DDROP,
+	TWO_DROP,
 	PUSH(0),EXIT
 )
 m4_forthword(`COMPARE',compare,
 	ROT,SWAP,
-	DDUP,MIN,
+	TWO_DUP,MIN,
 	UNROT,TO_R,TO_R,
 	COMPARE_N,
 	DUP,m4_IF(`
@@ -471,10 +477,10 @@ m4_forthword(`NOT-WHITESPACE',not_whitespace,
 m4_forthword(`PARSE-NAME',parse_name,
 	SOURCE,IN,FETCH,SHIFT_STRING,
 	PUSH(XT(not_whitespace)),SKIP_UNTIL,
-	DDUP,
+	TWO_DUP,
 	PUSH(XT(whitespace)),SKIP_UNTIL,
 	NIP,SUB,
-	DDUP,ADD,SOURCE_ADDR,FETCH,SUB,IN,STORE,
+	TWO_DUP,ADD,SOURCE_ADDR,FETCH,SUB,IN,STORE,
 	EXIT
 )
 
