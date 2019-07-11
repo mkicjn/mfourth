@@ -6,12 +6,18 @@ m4_include(cmacros.m4)m4_dnl
 
 #include <stdint.h>
 #if INTPTR_MAX > 0xFFFFFFFF
+typedef __uint128_t udcell_t;
+typedef __int128_t dcell_t;
 typedef int64_t cell_t;
 typedef uint64_t ucell_t;
 #elif INTPTR_MAX > 0xFFFF
+typedef uint64_t udcell_t;
+typedef int64_t dcell_t;
 typedef int32_t cell_t;
 typedef uint32_t ucell_t;
 #else
+typedef uint32_t udcell_t;
+typedef int32_t dcell_t;
 typedef int16_t cell_t;
 typedef uint16_t ucell_t;
 #endif
@@ -106,6 +112,8 @@ m4_regops(rp)
 
 	/* Stack manipulation */
 
+#define swap(type,a,b) do {type c=a; a=b; b=c;} while (0)
+
 m4_cword(`DUP',dup)
 {
 	sp[-1]=sp[0];
@@ -117,9 +125,7 @@ m4_cword(`DROP',drop)
 }
 m4_cword(`SWAP',swap)
 {
-	register cell_t tmp=sp[1];
-	sp[1]=sp[0];
-	sp[0]=tmp;
+	swap(cell_t,sp[0],sp[1]);
 	next(ip,sp,rp);
 }
 m4_cword(`ROT',rot)
@@ -180,26 +186,6 @@ m4_cword(`RDROP',rdrop)
 	next(ip,sp,rp+1);
 }
 
-	/* Double-cell manipulation */
-
-m4_cword(`2DROP',ddrop)
-{
-	next(ip,sp+2,rp);
-}
-m4_cword(`2DUP',ddup)
-{
-	sp[-1]=sp[1];
-	sp[-2]=sp[0];
-	next(ip,sp-2,rp);
-}
-m4_cword(`2>R',two_to_r)
-{
-	rp[-1]=sp[1];
-	rp[-2]=sp[0];
-	next(ip,sp+2,rp-2);
-}
-/* TODO: More double-cell words */
-
 	/* Arithmetic */
 
 m4_cword(`+',add) m4_2op(+)
@@ -242,6 +228,51 @@ m4_cword(`MIN',min)
 	sp[1]=sp[0]<sp[1]?sp[0]:sp[1];
 	next(ip,sp+1,rp);
 }
+
+	/* Double-cell manipulation */
+
+m4_cword(`2DROP',ddrop)
+{
+	next(ip,sp+2,rp);
+}
+m4_cword(`2DUP',ddup)
+{
+	sp[-1]=sp[1];
+	sp[-2]=sp[0];
+	next(ip,sp-2,rp);
+}
+m4_cword(`2SWAP',dswap)
+{
+	swap(cell_t,sp[0],sp[2]);
+	swap(cell_t,sp[1],sp[3]);
+	next(ip,sp,rp);
+}
+m4_cword(`2>R',two_to_r)
+{
+	rp[-1]=sp[1];
+	rp[-2]=sp[0];
+	next(ip,sp+2,rp-2);
+}
+/* TODO: More double-cell words */
+
+	/* Double/Mixed-width Arithmetic */
+
+m4_cword(`UM*',um_mul)
+{
+	udcell_t p=sp[1]*sp[0];
+	sp[1]=p;
+	sp[0]=p>>(sizeof(cell_t)*8);
+	next(ip,sp,rp);
+}
+m4_cword(`M+',m_add)
+{
+	cell_t a=sp[2]+sp[0];
+	if (a<sp[2])
+		sp[1]++;
+	sp[2]=a;
+	next(ip,sp+1,rp);
+}
+/* TODO: More double/mixed width words */
 
 	/* Comparisons */
 
@@ -447,7 +478,6 @@ m4_forthword(`PARSE-NAME',parse_name,
 	EXIT
 )
 
-
 m4_forthword(`',entry,
 	REFILL,DROP,
 	m4_BEGIN_WHILE_REPEAT(`PARSE_NAME,DUP',`
@@ -459,6 +489,5 @@ m4_forthword(`',entry,
 void _start(void)
 {
 	next((cell_t *)XT(entry),EOS(stack),EOS(rstack));
-	bye();
 }
 m4_include(.edit_warning)m4_dnl
