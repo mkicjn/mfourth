@@ -78,7 +78,9 @@
 		EXECUTE
 	THEN
 ;
-: EXTRACT OVER C@ >R 1 /STRING R> ;
+: EXTRACT ( c-addr u -- c-addr+1 u-1 char )
+	OVER C@ >R 1 /STRING R>
+;
 : DIGIT ( char -- val )
 	[CHAR] 0 -
 	DUP 0 < IF
@@ -96,7 +98,7 @@
 		EXIT
 	THEN THEN
 ;
-: >BASE ( c-addr u -- c-addr2 u2 base )
+: >BASE ( c-addr u -- c-addr u base )
 	OVER C@ CASE
 		[CHAR] $ OF 1 /STRING 16 ENDOF
 		[CHAR] # OF 1 /STRING 10 ENDOF
@@ -104,7 +106,7 @@
 		BASE @ SWAP
 	ENDCASE
 ;
-: >SIGN ( c-addr u -- c-addr2 u2 sign )
+: >SIGN ( c-addr u -- c-addr u sign )
 	OVER C@ [CHAR] - = DUP IF
 		>R 1 /STRING R>
 	THEN
@@ -121,7 +123,8 @@
 			RDROP RDROP
 			EXIT
 		THEN
-		>R ROT R> SWAP R@ * + -ROT
+		R@ 2>R
+		ROT R> * R> + -ROT
 	REPEAT
 	ROT
 	RDROP R> IF NEGATE THEN
