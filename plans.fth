@@ -116,20 +116,19 @@
 		DUP 0>
 	WHILE
 		EXTRACT DIGIT
-		DUP 0< OVER R@ > OR IF
+		DUP 0< OVER BASE @ >= OR IF
 			DROP
-			RDROP
 			EXIT
 		THEN
 		>R
 		2SWAP
-		BASE @ M* DROP >R
-		BASE @ M* R> +
+		BASE @ UM* DROP >R BASE @ UM* R> +
 		R> M+
 		2SWAP
 	REPEAT
 ;
 : >CHAR ( c-addr u -- c-addr u 0 | char ~0 )
+	DUP 3 <> IF 0 EXIT THEN
 	>R
 	DUP C@ [CHAR] ' = OVER 2 + C@ [CHAR] ' = AND IF
 		1+ C@
@@ -138,39 +137,26 @@
 		R> 0
 	THEN
 ;
-: IS-NUMBER? ( c-addr u -- n 1|2 | c-addr u 0 )
+: IS-NUMBER? ( c-addr u -- n ~0 | c-addr u 0 )
 	>CHAR IF -1 EXIT THEN
+	2DUP
 	>BASE BASE DUP @ >R !
 	>SIGN >R
-	2DUP 0 0 2SWAP
-	>NUMBER NIP IF
-		2DROP
+	0 0 2SWAP
+	>NUMBER NIP NIP IF
+		DROP
 		RDROP
-		R> BASE !
-		0 EXIT
-	THEN
-	DUP 0= OVER -1 = OR IF
-		DROP NIP NIP
-		R> IF NEGATE THEN
-		1
+		0
 	ELSE
-		2NIP
-		R> IF NEGATE >R NEGATE R> THEN
-		2
+		NIP NIP
+		R> IF NEGATE THEN
+		-1
 	THEN
 	R> BASE !
 ;
-: HANDLE-# ( d|n 1|2 -- )
-	1 = IF
-		STATE @ IF
-			POSTPONE LITERAL
-		THEN
-	ELSE
-		STATE @ IF
-			SWAP
-			POSTPONE LITERAL
-			POSTPONE LITERAL
-		THEN
+: HANDLE-# ( n -- )
+	STATE @ IF
+		POSTPONE LITERAL
 	THEN
 ;
 : /STRING ( c-addr u n -- c-addr+n u-n )
@@ -208,7 +194,7 @@
 		HANDLE-XT
 		EXIT
 	THEN
-	IS-NUMBER? DUP IF
+	IS-NUMBER? IF
 		HANDLE-#
 		EXIT
 	THEN
