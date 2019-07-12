@@ -304,8 +304,13 @@ m4_cword(`0<=',zlte) m4_1op(,-,<=0)
 m4_constant(`CELL',cell,sizeof(cell_t))
 m4_constant(`S0',s_naught,EOS(stack))
 m4_constant(`R0',r_naught,EOS(rstack))
+
 m4_constant(`D0',d_naught,uarea)
 m4_variable(`DP',dp,uarea)
+
+m4_constant(`BL',bl,32)
+m4_forthword(`SPACE',space,BL,EMIT,EXIT)
+m4_forthword(`CR',cr,PUSH(10),EMIT,EXIT)
 
 	/* Memory access */
 
@@ -362,79 +367,9 @@ m4_forthword(`C,',charcomma,
 
 	/* Parsing */
 
-#define TIB_SIZE (1<<10)
-char tib[TIB_SIZE];
-m4_constant(`TIB',tib,tib)
-m4_constant(``/TIB'',per_tib,TIB_SIZE)
-m4_variable(`SOURCE&',source_addr,tib);
-m4_variable(``SOURCE#'',source_len,0);
-m4_variable(`>IN',in,0)
-
-
-m4_forthword(`SOURCE',source,
-	SOURCE_ADDR,FETCH,SOURCE_LEN,FETCH,EXIT
-)
-m4_forthword(`SOURCE!',sourcestore,
-	SOURCE_LEN,STORE,SOURCE_ADDR,STORE,EXIT
-)
-m4_forthword(`SOURCE-ID',source_id,
-	SOURCE_ADDR,FETCH,TIB,NEQ,EXIT
-)
-m4_forthword(`ACCEPT',accept,
-	TO_R,PUSH(0),
-	m4_BEGIN_AGAIN(`
-		DUP,RFETCH,GTE,m4_IF(`
-			NIP,RDROP,
-			EXIT
-		'),
-		SWAP,
-		KEY,DUP,PUSH(10),EQ,m4_IF(`
-			TWO_DROP,RDROP,
-			EXIT
-		'),
-		OVER,STORE,INCR,SWAP,INCR
-	')
-)
-
-m4_forthword(`REFILL',refill,
-	SOURCE_ID,m4_IF(`
-		PUSH(0),EXIT
-	'),
-	TIB,PER_TIB,ACCEPT,
-	SOURCE_LEN,STORE,
-	PUSH(0),IN,STORE,
-	PUSH(-1),
-	EXIT
-)
-
-m4_forthword(`COMPARE-#',compare_n,
-	m4_BEGIN_WHILE_REPEAT(`DUP,ZGTE',`
-		TO_R,
-		OVER,CHARFETCH,OVER,CHARFETCH,SUB,
-		PUSH(1),MIN,PUSH(-1),MAX,
-		DUP,ZNEQ,m4_IF(`
-			RDROP,NIP,NIP,EXIT
-		'),
-		DROP,
-		INCR,SWAP,INCR,SWAP,
-		R_FROM,DECR
-	'),
-	TWO_DROP,
-	PUSH(0),EXIT
-)
-m4_forthword(`COMPARE',compare,
-	ROT,SWAP,
-	TWO_DUP,MIN,
-	UNROT,TO_R,TO_R,
-	COMPARE_N,
-	DUP,m4_IF(`
-		RDROP,RDROP,
-		EXIT
-	'),
-	R_FROM,R_FROM,SUB,
-	PUSH(1),MIN,PUSH(-1),MAX,
-	EXIT
-)
+m4_include(source.m4)
+m4_include(compare.m4)
+m4_include(parse-name.m4)
 
 m4_forthword(`EXTRACT',extract,
 	DECR,SWAP,INCR,SWAP,OVER,DECR,CHARFETCH,EXIT
@@ -443,42 +378,6 @@ m4_forthword(`TYPE',type,
 	m4_BEGIN_WHILE_REPEAT(`DUP,ZGT',`
 		EXTRACT,EMIT
 	'),
-	EXIT
-)
-
-m4_constant(`BL',bl,32)
-m4_forthword(`SPACE',space,
-	BL,EMIT,EXIT
-)
-m4_forthword(`CR',cr,
-	PUSH(10),EMIT,EXIT
-)
-
-m4_forthword(`/STRING',shift_string,
-	TO_R,SWAP,RFETCH,ADD,SWAP,R_FROM,SUB,EXIT
-)
-m4_forthword(`SKIP-UNTIL',skip_until,
-	TO_R,
-	m4_BEGIN_AGAIN(`
-		DUP,ZLTE,m4_IF(`RDROP,EXIT'),
-		OVER,CHARFETCH,RFETCH,EXECUTE,m4_IF(`RDROP,EXIT'),
-		DECR,SWAP,INCR,SWAP
-	'),
-	EXIT
-)
-m4_forthword(`WHITESPACE',whitespace,
-	BL,LTE,EXIT
-)
-m4_forthword(`NOT-WHITESPACE',not_whitespace,
-	BL,GT,EXIT
-)
-m4_forthword(`PARSE-NAME',parse_name,
-	SOURCE,IN,FETCH,SHIFT_STRING,
-	PUSH(XT(not_whitespace)),SKIP_UNTIL,
-	TWO_DUP,
-	PUSH(XT(whitespace)),SKIP_UNTIL,
-	NIP,SUB,
-	TWO_DUP,ADD,SOURCE_ADDR,FETCH,SUB,IN,STORE,
 	EXIT
 )
 

@@ -1,0 +1,27 @@
+m4_forthword(`/STRING',shift_string,
+	TO_R,SWAP,RFETCH,ADD,SWAP,R_FROM,SUB,EXIT
+)
+m4_forthword(`SKIP-UNTIL',skip_until,
+	TO_R,
+	m4_BEGIN_AGAIN(`
+		DUP,ZLTE,m4_IF(`RDROP,EXIT'),
+		OVER,CHARFETCH,RFETCH,EXECUTE,m4_IF(`RDROP,EXIT'),
+		DECR,SWAP,INCR,SWAP
+	'),
+	EXIT
+)
+m4_forthword(`WHITESPACE',whitespace,
+	BL,LTE,EXIT
+)
+m4_forthword(`NOT-WHITESPACE',not_whitespace,
+	BL,GT,EXIT
+)
+m4_forthword(`PARSE-NAME',parse_name,
+	SOURCE,IN,FETCH,SHIFT_STRING,
+	PUSH(XT(not_whitespace)),SKIP_UNTIL,
+	TWO_DUP,
+	PUSH(XT(whitespace)),SKIP_UNTIL,
+	NIP,SUB,
+	TWO_DUP,ADD,SOURCE_ADDR,FETCH,SUB,IN,STORE,
+	EXIT
+)

@@ -12,7 +12,7 @@ a.out: base.o 3lib.o
 posix: base.c posix.c
 	$(CC) $(CFLAGS) $^
 
-base.c: mfourth.m4.c cmacros.m4
+base.c: mfourth.m4.c *.m4
 	m4 -P $< > $@
 
 base.o: base.c 3lib.h
