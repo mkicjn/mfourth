@@ -1,4 +1,4 @@
-CC=gcc
+CC=clang
 CFLAGS=-ansi -O2 -g -nostartfiles -Wall -Wextra -Wpedantic
 
 ASM=nasm

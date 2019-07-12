@@ -241,6 +241,12 @@ m4_cword(`2SWAP',two_swap)
 	swap(cell_t,sp[1],sp[3]);
 	next(ip,sp,rp);
 }
+m4_cword(`2NIP',two_nip)
+{
+	sp[3]=sp[1];
+	sp[2]=sp[0];
+	next(ip,sp,rp);
+}
 m4_cword(`2OVER',two_over)
 {
 	sp[-1]=sp[3];
@@ -257,19 +263,17 @@ m4_cword(`2>R',two_to_r)
 
 	/* Double/Mixed-width Arithmetic */
 
-m4_cword(`M*',m_mul)
+m4_cword(`UM*',um_mul)
 {
-	dcell_t p=sp[1]*sp[0];
-	sp[1]=p;
-	sp[0]=p>>(sizeof(cell_t)*8);
+	ucell_t a=sp[1],b=sp[0];
+	udcell_t prod=(udcell_t)a*b;
+	sp[0]=prod>>(sizeof(cell_t)*8);
+	sp[1]=prod;
 	next(ip,sp,rp);
 }
 m4_cword(`M+',m_add)
 {
-	cell_t a=sp[2]+sp[0];
-	if (a<sp[2])
-		sp[1]++;
-	sp[2]=a;
+	*(dcell_t *)&sp[1]+=sp[0];
 	next(ip,sp+1,rp);
 }
 /* TODO: More double/mixed width words */
