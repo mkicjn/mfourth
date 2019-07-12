@@ -436,13 +436,12 @@ m4_forthword(`COMPARE',compare,
 	EXIT
 )
 
-m4_forthword(`/STRING',shift_string,
-	TO_R,SWAP,RFETCH,ADD,SWAP,R_FROM,SUB,EXIT
+m4_forthword(`EXTRACT',extract,
+	DECR,SWAP,INCR,SWAP,OVER,DECR,CHARFETCH,EXIT
 )
 m4_forthword(`TYPE',type,
 	m4_BEGIN_WHILE_REPEAT(`DUP,ZGT',`
-		OVER,CHARFETCH,EMIT,
-		PUSH(1),SHIFT_STRING
+		EXTRACT,EMIT,
 	'),
 	EXIT
 )
@@ -455,14 +454,15 @@ m4_forthword(`CR',cr,
 	PUSH(10),EMIT,EXIT
 )
 
-	/* Testing area */
-
+m4_forthword(`/STRING',shift_string,
+	TO_R,SWAP,RFETCH,ADD,SWAP,R_FROM,SUB,EXIT
+)
 m4_forthword(`SKIP-UNTIL',skip_until,
 	TO_R,
 	m4_BEGIN_AGAIN(`
 		DUP,ZLTE,m4_IF(`RDROP,EXIT'),
 		OVER,CHARFETCH,RFETCH,EXECUTE,m4_IF(`RDROP,EXIT'),
-		PUSH(1),SHIFT_STRING
+		DECR,SWAP,INCR,SWAP
 	'),
 	EXIT
 )
@@ -481,6 +481,8 @@ m4_forthword(`PARSE-NAME',parse_name,
 	TWO_DUP,ADD,SOURCE_ADDR,FETCH,SUB,IN,STORE,
 	EXIT
 )
+
+	/* Testing area */
 
 m4_forthword(`',entry,
 	REFILL,DROP,

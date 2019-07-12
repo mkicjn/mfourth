@@ -79,7 +79,7 @@
 	THEN
 ;
 : EXTRACT ( c-addr u -- c-addr+1 u-1 char )
-	OVER C@ >R 1 /STRING R>
+	1- SWAP 1+ SWAP OVER 1- C@
 ;
 : DIGIT ( char -- val )
 	[CHAR] 0 -
