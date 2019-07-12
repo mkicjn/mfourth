@@ -441,7 +441,7 @@ m4_forthword(`EXTRACT',extract,
 )
 m4_forthword(`TYPE',type,
 	m4_BEGIN_WHILE_REPEAT(`DUP,ZGT',`
-		EXTRACT,EMIT,
+		EXTRACT,EMIT
 	'),
 	EXIT
 )
