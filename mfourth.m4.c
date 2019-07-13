@@ -42,6 +42,7 @@ cell_t uarea[USER_AREA_SIZE];
 
 #define push(s,v) (*(++s)=(cell_t)(v))
 #define pop(s) (*(s--))
+/* s[0] is TOS, s[+n] is above stack, s[-n] is nth item */
 
 void next(cell_t *ip,cell_t *sp,cell_t *rp)
 {
@@ -395,6 +396,6 @@ m4_forthword(`',entry,
 
 void _start(void)
 {
-	next((cell_t *)XT(entry),stack-1,rstack-1);
+	next((cell_t *)XT(entry),stack,rstack);
 }
 m4_include(.edit_warning)m4_dnl
