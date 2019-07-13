@@ -193,8 +193,8 @@ m4_cword(`AND',and) m4_2op(&)
 m4_cword(`OR',or) m4_2op(|)
 m4_cword(`XOR',xor) m4_2op(^)
 
-m4_cword(`NEGATE',neg) m4_1op(-)
-m4_cword(`INVERT',not) m4_1op(~)
+m4_cword(`NEGATE',negate) m4_1op(-)
+m4_cword(`INVERT',invert) m4_1op(~)
 m4_cword(`1+',incr) m4_1op(1+)
 m4_cword(`1-',decr) m4_1op(-1+)
 
@@ -265,6 +265,11 @@ m4_cword(`2>R',two_to_r)
 
 m4_cword(`UM*',um_mul)
 {
+/* This wouldn't work because the stack grows downwards
+	ucell_t a=sp[1],b=sp[0];
+	*(udcell_t *)sp=a*b;
+	next(ip,sp+1,rp);
+*/
 	ucell_t a=sp[1],b=sp[0];
 	udcell_t prod=(udcell_t)a*b;
 	sp[0]=prod>>(sizeof(cell_t)*8);
@@ -273,7 +278,14 @@ m4_cword(`UM*',um_mul)
 }
 m4_cword(`M+',m_add)
 {
+/* This wouldn't work because the stack grows downwards
 	*(dcell_t *)&sp[1]+=sp[0];
+	next(ip,sp+1,rp);
+*/
+	dcell_t sum=((dcell_t)sp[1]<<(sizeof(cell_t)*8))+sp[2];
+	sum+=(dcell_t)sp[0];
+	sp[1]=sum>>64;
+	sp[2]=sum;
 	next(ip,sp+1,rp);
 }
 /* TODO: More double/mixed width words */
@@ -367,10 +379,6 @@ m4_forthword(`C,',charcomma,
 
 	/* Parsing */
 
-m4_include(source.m4)
-m4_include(compare.m4)
-m4_include(parse-name.m4)
-
 m4_forthword(`EXTRACT',extract,
 	DECR,SWAP,INCR,SWAP,OVER,DECR,CHARFETCH,EXIT
 )
@@ -381,13 +389,17 @@ m4_forthword(`TYPE',type,
 	EXIT
 )
 
+m4_include(source.m4)
+m4_include(compare.m4)
+m4_include(parse-name.m4)
+m4_include(number.m4)
+
 	/* Testing area */
 
 m4_forthword(`',entry,
 	REFILL,DROP,
-	m4_BEGIN_WHILE_REPEAT(`PARSE_NAME,DUP',`
-		TYPE,CR
-	'),
+	PARSE_NAME,IS_NUMBER,
+	m4_IF(`EMIT'),
 	BYE
 )
 
