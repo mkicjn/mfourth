@@ -37,16 +37,20 @@ typedef void (*prim_t)(cell_t *,cell_t *,cell_t *);
 cell_t stack[STACK_SIZE];
 cell_t rstack[STACK_SIZE];
 cell_t uarea[USER_AREA_SIZE];
-#define EOS(s) &s[sizeof(s)/sizeof(*s)]
 
 	/* Kernel structure */
 
-#define push(s,v) (*(--s)=(cell_t)(v))
-#define pop(s) (*(s++))
+#define push(s,v) (*(++s)=(cell_t)(v))
+#define pop(s) (*(s--))
 
 void next(cell_t *ip,cell_t *sp,cell_t *rp)
 {
 	(*(prim_t *)ip)(ip+1,sp,rp);
+}
+
+void breakpoint(cell_t *ip,cell_t *sp,cell_t *rp)
+{
+	next(ip,sp,rp);
 }
 
 m4_cword(`EXIT',exit)
@@ -101,7 +105,7 @@ m4_cword(`0BRANCH',zbranch)
 m4_cword(`EXECUTE',execute)
 {
 	push(rp,ip);
-	next((cell_t *)*sp,sp+1,rp);
+	next((cell_t *)*sp,sp-1,rp);
 }
 
 	/* Register manipulation */
@@ -116,45 +120,45 @@ m4_regops(rp)
 
 m4_cword(`DUP',dup)
 {
-	sp[-1]=sp[0];
-	next(ip,sp-1,rp);
+	sp[1]=sp[0];
+	next(ip,sp+1,rp);
 }
 m4_cword(`DROP',drop)
 {
-	next(ip,sp+1,rp);
+	next(ip,sp-1,rp);
 }
 m4_cword(`SWAP',swap)
 {
-	swap(cell_t,sp[0],sp[1]);
+	swap(cell_t,sp[0],sp[-1]);
 	next(ip,sp,rp);
 }
 m4_cword(`ROT',rot)
 {
-	swap(cell_t,sp[2],sp[1]);
-	swap(cell_t,sp[1],sp[0]);
+	swap(cell_t,sp[-2],sp[-1]);
+	swap(cell_t,sp[-1],sp[0]);
 	next(ip,sp,rp);
 }
 
 m4_cword(`NIP',nip)
 {
-	sp[1]=sp[0];
-	next(ip,sp+1,rp);
+	sp[-1]=sp[0];
+	next(ip,sp-1,rp);
 }
 m4_cword(`TUCK',tuck)
 {
-	swap(cell_t,sp[0],sp[1]);
-	sp[-1]=sp[1];
-	next(ip,sp-1,rp);
+	swap(cell_t,sp[0],sp[-1]);
+	sp[1]=sp[-1];
+	next(ip,sp+1,rp);
 }
 m4_cword(`OVER',over)
 {
-	sp[-1]=sp[1];
-	next(ip,sp-1,rp);
+	sp[1]=sp[-1];
+	next(ip,sp+1,rp);
 }
 m4_cword(`-ROT',unrot)
 {
-	swap(cell_t,sp[0],sp[1]);
-	swap(cell_t,sp[1],sp[2]);
+	swap(cell_t,sp[0],sp[-1]);
+	swap(cell_t,sp[-1],sp[-2]);
 	next(ip,sp,rp);
 }
 
@@ -177,7 +181,7 @@ m4_cword(`R@',rfetch)
 }
 m4_cword(`RDROP',rdrop)
 {
-	next(ip,sp,rp+1);
+	next(ip,sp,rp-1);
 }
 
 	/* Arithmetic */
@@ -200,8 +204,8 @@ m4_cword(`1-',decr) m4_1op(-1+)
 
 m4_cword(`/MOD',divmod)
 {
-	register cell_t a=sp[1],b=sp[0];
-	sp[1]=a%b;
+	register cell_t a=sp[-1],b=sp[0];
+	sp[-1]=a%b;
 	sp[0]=a/b;
 	next(ip,sp,rp);
 }
@@ -214,50 +218,50 @@ m4_cword(`ABS',abs)
 }
 m4_cword(`MAX',max)
 {
-	sp[1]=sp[0]>sp[1]?sp[0]:sp[1];
-	next(ip,sp+1,rp);
+	sp[-1]=sp[0]>sp[-1]?sp[0]:sp[-1];
+	next(ip,sp-1,rp);
 }
 m4_cword(`MIN',min)
 {
-	sp[1]=sp[0]<sp[1]?sp[0]:sp[1];
-	next(ip,sp+1,rp);
+	sp[-1]=sp[0]<sp[-1]?sp[0]:sp[-1];
+	next(ip,sp-1,rp);
 }
 
 	/* Double-cell manipulation */
 
 m4_cword(`2DUP',two_dup)
 {
-	sp[-1]=sp[1];
-	sp[-2]=sp[0];
-	next(ip,sp-2,rp);
+	sp[1]=sp[-1];
+	sp[2]=sp[0];
+	next(ip,sp+2,rp);
 }
 m4_cword(`2DROP',two_drop)
 {
-	next(ip,sp+2,rp);
+	next(ip,sp-2,rp);
 }
 m4_cword(`2SWAP',two_swap)
 {
-	swap(cell_t,sp[0],sp[2]);
-	swap(cell_t,sp[1],sp[3]);
+	swap(cell_t,sp[0],sp[-2]);
+	swap(cell_t,sp[-1],sp[-3]);
 	next(ip,sp,rp);
 }
 m4_cword(`2NIP',two_nip)
 {
-	sp[3]=sp[1];
-	sp[2]=sp[0];
+	sp[-3]=sp[-1];
+	sp[-2]=sp[0];
 	next(ip,sp,rp);
 }
 m4_cword(`2OVER',two_over)
 {
-	sp[-1]=sp[3];
-	sp[-2]=sp[2];
-	next(ip,sp-2,rp);
+	sp[1]=sp[-3];
+	sp[2]=sp[-2];
+	next(ip,sp+2,rp);
 }
 m4_cword(`2>R',two_to_r)
 {
-	rp[-1]=sp[1];
-	rp[-2]=sp[0];
-	next(ip,sp+2,rp-2);
+	rp[1]=sp[-1];
+	rp[2]=sp[0];
+	next(ip,sp-2,rp+2);
 }
 /* TODO: More double-cell words */
 
@@ -265,28 +269,14 @@ m4_cword(`2>R',two_to_r)
 
 m4_cword(`UM*',um_mul)
 {
-/* This wouldn't work because the stack grows downwards
-	ucell_t a=sp[1],b=sp[0];
-	*(udcell_t *)sp=a*b;
-	next(ip,sp+1,rp);
-*/
-	ucell_t a=sp[1],b=sp[0];
-	udcell_t prod=(udcell_t)a*b;
-	sp[0]=prod>>(sizeof(cell_t)*8);
-	sp[1]=prod;
+	ucell_t a=sp[-1],b=sp[0];
+	*(udcell_t *)&sp[-1]=(udcell_t)a*b;
 	next(ip,sp,rp);
 }
 m4_cword(`M+',m_add)
 {
-/* This wouldn't work because the stack grows downwards
-	*(dcell_t *)&sp[1]+=sp[0];
-	next(ip,sp+1,rp);
-*/
-	dcell_t sum=((dcell_t)sp[1]<<(sizeof(cell_t)*8))+sp[2];
-	sum+=(dcell_t)sp[0];
-	sp[1]=sum>>64;
-	sp[2]=sum;
-	next(ip,sp+1,rp);
+	*(dcell_t *)&sp[-2]+=sp[0];
+	next(ip,sp-1,rp);
 }
 /* TODO: More double/mixed width words */
 
@@ -314,8 +304,8 @@ m4_cword(`0<=',zlte) m4_1op(,-,<=0)
 	/* Miscellaneous constants/variables */
 
 m4_constant(`CELL',cell,sizeof(cell_t))
-m4_constant(`S0',s_naught,EOS(stack))
-m4_constant(`R0',r_naught,EOS(rstack))
+m4_constant(`S0',s_naught,stack)
+m4_constant(`R0',r_naught,rstack)
 
 m4_constant(`D0',d_naught,uarea)
 m4_variable(`DP',dp,uarea)
@@ -333,13 +323,13 @@ m4_cword(`@',fetch)
 }
 m4_cword(`!',store)
 {
-	*(cell_t *)sp[0]=sp[1];
-	next(ip,sp+2,rp);
+	*(cell_t *)sp[0]=sp[-1];
+	next(ip,sp-2,rp);
 }
 m4_cword(`+!',addstore)
 {
-	*(cell_t *)sp[0]+=sp[1];
-	next(ip,sp+2,rp);
+	*(cell_t *)sp[0]+=sp[-1];
+	next(ip,sp-2,rp);
 }
 
 m4_cword(`C@',charfetch)
@@ -349,8 +339,8 @@ m4_cword(`C@',charfetch)
 }
 m4_cword(`C!',charstore)
 {
-	*(char *)sp[0]=(char)sp[1];
-	next(ip,sp+2,rp);
+	*(char *)sp[0]=(char)sp[-1];
+	next(ip,sp-2,rp);
 }
 
 m4_cword(`CELL+',cell_add)
@@ -398,13 +388,13 @@ m4_include(number.m4)
 
 m4_forthword(`',entry,
 	REFILL,DROP,
-	PARSE_NAME,IS_NUMBER,
-	m4_IF(`EMIT'),
+	PARSE_NAME,
+	IS_NUMBER,m4_IF(`EMIT'),
 	BYE
 )
 
 void _start(void)
 {
-	next((cell_t *)XT(entry),EOS(stack),EOS(rstack));
+	next((cell_t *)XT(entry),stack-1,rstack-1);
 }
 m4_include(.edit_warning)m4_dnl

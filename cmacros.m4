@@ -40,24 +40,26 @@ m4_define(`PUSH',`DOLIT,LIT($1)')
 m4_define(`m4_regops',`
 m4_cword(m4_upcase($1)@,$1fetch)
 {
-	sp[-1]=(cell_t)$1;
-	next(ip,sp-1,rp);
+	sp[1]=(cell_t)$1;
+	next(ip,sp+1,rp);
 }
 m4_cword(m4_upcase($1)!,$1store)
 {
 	$1=(cell_t *)sp[0];
-	next(ip,sp+1,rp);
+	next(ip,sp-1,rp);
 }')
 
 	Arithmetic/Comparisons
 
 m4_define(`m4_1op',`{
-	sp[0]=$2($1sp[0]$3);
+	cell_t a=sp[0];
+	sp[0]=$2($1a$3);
 	next(ip,sp,rp);
 }')
 m4_define(`m4_2op',`{
-	sp[1]=$2(($3cell_t)sp[1]$1($3cell_t)sp[0]);
-	next(ip,sp+1,rp);
+	cell_t a=sp[-1],b=sp[0];
+	sp[-1]=$2(($3cell_t)a$1($3cell_t)b);
+	next(ip,sp-1,rp);
 }')
 
 	Constants/Variables
