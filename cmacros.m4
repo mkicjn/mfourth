@@ -31,7 +31,7 @@ struct {
 m4_define(`m4_last',`&$2_defn.link')m4_dnl
 m4_define(m4_upcase($2),`DOCOL,LIT(XT($2))')m4_dnl
 ')
-m4_define(`LIT',`(prim_t)(cell_t)($1)')
+m4_define(`LIT',`(prim_t)($1)')
 m4_define(`XT',`&$1_defn.xt')
 m4_define(`PUSH',`DOLIT,LIT($1)')
 
@@ -78,7 +78,7 @@ m4_forthword($1,$2,
 	Control structures
 
 m4_define(`m4_count',`$#')
-m4_define(`m4_expand',`$@')
+m4_define(`m4_expand',`$*')
 m4_define(`m4_IF',`
 	ZBRANCH,LIT(m4_eval(m4_count(m4_expand($1))+1)*sizeof(cell_t)),m4_expand($1)
 	')
