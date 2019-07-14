@@ -6,19 +6,21 @@ m4_define(`m4_count',`$#')
 m4_define(`m4_expand',`$*')
 m4_define(`m4_substlist',`')
 m4_define(`m4_quote',``$@'')
-m4_define(`m4_esccomma',`m4_patsubst(`$1',`,',```,''')')
+m4_define(`m4_escctrls',`m4_patsubst(`$1',`\([,#]\)',```\1''')')
+m4_define(`m4_remform',`m4_patsubst(`$1',`[
+	 ]+',`  ')')
 m4_define(`m4_addsubst',`m4_define(`m4_substlist',m4_quote(`$1',`$2',m4_substlist))')
 m4_define(`m4_dosubsts',`m4_ifelse(`$2',`',`$1',`m4_dosubsts(m4_patsubst(``$1'',`$2',`$3'),m4_shift(m4_shift(m4_shift($@))))')')
-m4_define(`m4_forth',`m4_dosubsts(m4_esccomma(`$1'),m4_substlist)')
-m4_define(`m4_chop',`m4_substr(`$1',0,m4_eval(m4_len(`$1')-1))')
+m4_define(`m4_forth',`m4_dosubsts(m4_remform(m4_quote(m4_escctrls(`$1'))),m4_substlist)')
+m4_define(`m4_remempty',`m4_patsubst(`$*',`,$',`')')
 m4_addsubst(` ( [^)]*) ',`')
-m4_addsubst(`: \(.*\) ( \(.*\) )',`m4_forthword(`\1',\2, ')
+m4_addsubst(`: +\([^ ]*\) +( +\([^ )]*\) +)',`m4_forthword(`\1',\2, ')
 m4_addsubst(` ;',` exit_code)')
-m4_addsubst(` \([0-9]+\) ',` PUSH(\1), ')
-m4_addsubst(` BEGIN \(.*\) WHILE \(.*\) REPEAT ',` m4_BEGIN_WHILE_REPEAT(m4_chop(`\1'),m4_chop(`\2')), ')
-m4_addsubst(` BEGIN \(.*\) UNTIL ',` m4_BEGIN_UNTIL(m4_chop(`\1')), ')
-m4_addsubst(` BEGIN \(.*\) AGAIN ',` m4_BEGIN_AGAIN(m4_chop(`\1')), ')
-m4_addsubst(` IF \(.*\) ELSE \(.*\) THEN ',` m4_IF_ELSE(m4_chop(`\1'),m4_chop(`\2')), ')
+m4_addsubst(` \(-?[0-9]+\) ',` PUSH(\1), ')
+m4_addsubst(` BEGIN \(.*\) WHILE \(.*\) REPEAT ',` m4_BEGIN_WHILE_REPEAT(`\1',`\2'), ')
+m4_addsubst(` BEGIN \(.*\) UNTIL ',` m4_BEGIN_UNTIL(`\1'), ')
+m4_addsubst(` BEGIN \(.*\) AGAIN ',` m4_BEGIN_AGAIN(`\1'), ')
+m4_addsubst(` IF \(.*\) ELSE \(.*\) THEN ',` m4_IF_ELSE(`\1',`\2'), ')
 m4_addsubst(` IF \(.*\) THEN ',` m4_IF(`\1'), ')
 m4_define(`m4_escquants',`m4_patsubst(`$1',`[+*]',`\\\&')')
 m4_define(`m4_addsubst',`m4_define(`m4_substlist',m4_quote(m4_escquants(`$1'),`$2',m4_substlist))')
@@ -38,7 +40,7 @@ struct {
 	{$2_code,exit_code}
 };
 m4_define(`m4_last',`&$2_defn.link')m4_dnl
-m4_addsubst(` $1 ',` $2_code, ')m4_dnl
+m4_addsubst(` $1 ',`$2_code, ')m4_dnl
 void $2_code(cell_t *ip,cell_t *sp,cell_t *rp)m4_dnl
 ')
 
@@ -101,21 +103,16 @@ m4_forthword($1,$2,
 
 	Control structures
 
-m4_define(`m4_IF',`
-	zbranch_code,LIT(m4_eval(m4_count(m4_expand($1))+1)*sizeof(cell_t)),m4_expand($1)
-	')
-m4_define(`m4_IF_ELSE',`
-	zbranch_code,LIT(m4_eval(m4_count(m4_expand($1))+3)*sizeof(cell_t)),m4_expand($1),
-	branch_code,LIT(m4_eval(m4_count(m4_expand($2))+1)*sizeof(cell_t)),m4_expand($2)
-	')
-m4_define(`m4_BEGIN_AGAIN',`
-	m4_expand($1),branch_code,LIT(m4_eval(-m4_count(m4_expand($1))-1)*sizeof(cell_t))
-	')
-m4_define(`m4_BEGIN_UNTIL',`
-	m4_expand($1),zbranch_code,LIT(m4_eval(-m4_count(m4_expand($1))-1)*sizeof(cell_t))
-	')
-m4_define(`m4_BEGIN_WHILE_REPEAT',`
-	m4_expand($1),zbranch_code,LIT(m4_eval(m4_count(m4_expand($2))+3)*sizeof(cell_t)),
-	m4_expand($2),branch_code,LIT(m4_eval(-m4_count(m4_expand($1,$2))-3)*sizeof(cell_t))
-	')
+m4_define(`m4_IF',`m4_dnl
+zbranch_code,LIT(m4_eval(m4_count(m4_remempty($1))+1)*sizeof(cell_t)),m4_remempty($1)')
+m4_define(`m4_IF_ELSE',`m4_dnl
+zbranch_code,LIT(m4_eval(m4_count(m4_remempty($1))+3)*sizeof(cell_t)),m4_remempty($1),m4_dnl
+branch_code,LIT(m4_eval(m4_count(m4_remempty($2))+1)*sizeof(cell_t)),m4_remempty($2)')
+m4_define(`m4_BEGIN_AGAIN',`m4_dnl
+m4_remempty($1),branch_code,LIT(m4_eval(-m4_count(m4_remempty($1))-1)*sizeof(cell_t))')
+m4_define(`m4_BEGIN_UNTIL',`m4_dnl
+m4_remempty($1),zbranch_code,LIT(m4_eval(-m4_count(m4_remempty($1))-1)*sizeof(cell_t))')
+m4_define(`m4_BEGIN_WHILE_REPEAT',`m4_dnl
+m4_remempty($1),zbranch_code,LIT(m4_eval(m4_count(m4_remempty($2))+3)*sizeof(cell_t)),m4_dnl
+m4_remempty($2),branch_code,LIT(m4_eval(-m4_count(m4_remempty($1,$2))-3)*sizeof(cell_t))')
 m4_divert(0)m4_dnl
