@@ -17,11 +17,11 @@ m4_addsubst(` ( [^)]*) ',`')
 m4_addsubst(`: +\([^ ]*\) +( +\([^ )]*\) +)',`m4_forthword(`\1',\2, ')
 m4_addsubst(` ;',` exit_code)')
 m4_addsubst(` \(-?[0-9]+\) ',` PUSH(\1), ')
-m4_addsubst(` BEGIN \(.*\) WHILE \(.*\) REPEAT ',` m4_BEGIN_WHILE_REPEAT(`\1',`\2'), ')
-m4_addsubst(` BEGIN \(.*\) UNTIL ',` m4_BEGIN_UNTIL(`\1'), ')
-m4_addsubst(` BEGIN \(.*\) AGAIN ',` m4_BEGIN_AGAIN(`\1'), ')
-m4_addsubst(` IF \(.*\) ELSE \(.*\) THEN ',` m4_IF_ELSE(`\1',`\2'), ')
-m4_addsubst(` IF \(.*\) THEN ',` m4_IF(`\1'), ')
+m4_addsubst(` BEGIN \(.*?\) WHILE \(.*?\) REPEAT ',` m4_BEGIN_WHILE_REPEAT(`\1',`\2'), ')
+m4_addsubst(` BEGIN \(.*?\) UNTIL ',` m4_BEGIN_UNTIL(`\1'), ')
+m4_addsubst(` BEGIN \(.*?\) AGAIN ',` m4_BEGIN_AGAIN(`\1'), ')
+m4_addsubst(` IF \(.*?\) ELSE \(.*?\) THEN ',` m4_IF_ELSE(`\1',`\2'), ')
+m4_addsubst(` IF \(.*?\) THEN ',` m4_IF(`\1'), ')
 m4_define(`m4_escquants',`m4_patsubst(`$1',`[+*]',`\\\&')')
 m4_define(`m4_addsubst',`m4_define(`m4_substlist',m4_quote(m4_escctrls(m4_escquants(`$1')),`$2',m4_substlist))')
 	^ make addsubst safe for names containing quantifiers, e.g. 2* and M+
@@ -51,7 +51,7 @@ struct {
 	link_t link;
 	prim_t xt[m4_eval($#-2)];
 } $2_defn = {
-	{m4_last,"$1",m4_len($1)},
+	{m4_last,"`$1'",m4_len(`$1')},
 	{m4_shift(m4_shift($@))}
 };m4_dnl
 m4_define(`m4_last',`&$2_defn.link')m4_dnl
