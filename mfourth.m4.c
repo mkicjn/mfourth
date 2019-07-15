@@ -312,8 +312,8 @@ m4_constant(`D0',d_naught,uarea)
 m4_variable(`DP',dp,uarea)
 
 m4_constant(`BL',bl,32)
-m4_forthword(`SPACE',space,BL,EMIT,EXIT)
-m4_forthword(`CR',cr,PUSH(10),EMIT,EXIT)
+m4_forth(`: SPACE ( space ) BL EMIT ;')
+m4_forth(`: CR ( cr ) 10 EMIT ;')
 
 	/* Memory access */
 
@@ -355,44 +355,52 @@ m4_cword(`CELLS',cells)
 	next(ip,sp,rp);
 }
 
-m4_forthword(`HERE',here,
-	DP,FETCH,EXIT
-)
-m4_forthword(`ALLOT',allot,
-	DP,ADDSTORE,EXIT
-)
-m4_forthword(`,',comma,
-	HERE,STORE,CELL,ALLOT,EXIT
-)
-m4_forthword(`C,',charcomma,
-	HERE,CHARSTORE,PUSH(1),ALLOT,EXIT
-)
+m4_forth(`: HERE ( here ) DP @ ;')
+m4_forth(`: ALLOT ( allot ) DP +! ;')
+m4_forth(`: , ( comma ) HERE ! CELL ALLOT ;')
+m4_forth(`: C, ( charcomma ) HERE ! 1 ALLOT ;')
 
 	/* Parsing */
 
-m4_forthword(`EXTRACT',extract,
-	DECR,SWAP,INCR,SWAP,OVER,DECR,CHARFETCH,EXIT
-)
-m4_forthword(`TYPE',type,
-	m4_BEGIN_WHILE_REPEAT(`DUP,ZGT',`
-		EXTRACT,EMIT
-	'),
-	EXIT
-)
+#define TIB_SIZE (1<<10)
+char tib[TIB_SIZE];
+m4_constant(`TIB',tib,tib)
+m4_constant(``/TIB'',per_tib,TIB_SIZE)
+m4_variable(`SOURCE&',source_addr,tib);
+m4_variable(``SOURCE#'',source_len,0);
+m4_variable(`>IN',in,0)
 
-m4_include(source.m4)
-m4_include(compare.m4)
-m4_include(parse-name.m4)
-m4_include(number.m4)
+m4_forth(`: SOURCE ( source ) SOURCE& @ SOURCE# @ ;')
+m4_forth(`: SOURCE! ( source_store ) SOURCE# ! SOURCE& ! ;')
+m4_forth(`: SOURCE-ID ( source_id ) SOURCE& @ TIB <> ;')
+
+m4_forth(`: EXTRACT ( extract ) 1- SWAP 1+ SWAP OVER 1- C@ ;')
+m4_forth(`: TYPE ( type ) BEGIN DUP 0> WHILE EXTRACT EMIT REPEAT ;')
+
+m4_forth(m4_include(`fth/accept.fth'))
+m4_forth(m4_include(`fth/refill.fth'))
+
+m4_forth(m4_include(`fth/shift_string.fth'))
+m4_forth(m4_include(`fth/skip_until.fth'))
+m4_forth(m4_include(`fth/whitespace.fth'))
+m4_forth(m4_include(`fth/parse_name.fth'))
+
+m4_forth(m4_include(`fth/compare_n.fth'))
+m4_forth(m4_include(`fth/compare.fth'))
+
+m4_variable(`BASE',base,10)
+m4_forth(m4_include(`fth/digit.fth'))
+m4_forth(m4_include(`fth/to_base.fth'))
+m4_forth(m4_include(`fth/to_sign.fth'))
+m4_forth(m4_include(`fth/to_number.fth'))
+m4_forth(m4_include(`fth/to_char.fth'))
+m4_forth(m4_include(`fth/is_number.fth'))
 
 	/* Testing area */
 
-m4_forthword(`',entry,
-	REFILL,DROP,
-	PARSE_NAME,
-	IS_NUMBER,m4_IF(`EMIT'),
-	BYE
-)
+m4_dnl/* This is to fix syntax highlighting after the question mark
+m4_forth(`: ENTRY ( entry ) REFILL DROP PARSE-NAME IS-NUMBER? IF EMIT THEN BYE ;')
+m4_dnl*/
 
 void _start(void)
 {
