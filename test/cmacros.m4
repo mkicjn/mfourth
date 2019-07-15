@@ -91,12 +91,12 @@ m4_define(`m4_2op',`{
 	Constants/Variables
 
 m4_define(`m4_variable',`m4_dnl
-m4_forthword($1,$2,
+m4_forthword(`$1',`$2',
 	PUSH(&$2_defn.xt[3]),exit_code,LIT($3)
 )
 #define $2_ptr (&$2_defn.xt[3])')
 m4_define(`m4_constant',`m4_dnl
-m4_forthword($1,$2,
+m4_forthword(`$1',`$2',
 	PUSH($3),exit_code
 )
 #define $2_ptr (&$2_defn.xt[1])')
