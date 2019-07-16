@@ -4,5 +4,6 @@
 	THEN 
 	TIB /TIB ACCEPT
 	SOURCE# !
+	0 >IN !
 	-1
 ;
