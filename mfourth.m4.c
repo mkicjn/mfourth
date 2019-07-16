@@ -407,21 +407,22 @@ m4_forth(`: LINK>NAME ( link_to_name ) CELL+ DUP @ SWAP CELL+ @ IMMEDIACY INVERT
 m4_forth(`: LINK>XT ( link_to_xt ) 3 CELLS + ;')
 m4_forth(m4_include(`fth/search_wordlist.fth'))
 
-m4_variable(`FORTH',forth,m4_last)
-m4_variable(``#ORDER'',n_order,1)
+m4_variable(`FORTH',forth,0) /* Filled in later */
 m4_create(`CONTEXT',context,LIT(forth_ptr),m4_allot(15))
+m4_variable(``#ORDER'',n_order,1)
 m4_constant(`WORDLISTS',wordlists,16)
 
 m4_forth(m4_include(`fth/find_name.fth'))
 
 	/* Testing area */
-/*`
-m4_forth(`: ENTRY ( entry ) REFILL DROP PARSE-NAME IS-NUMBER? IF EMIT THEN BYE ;')
-'*/
+
 m4_forth(`: ENTRY ( entry ) REFILL DROP PARSE-NAME FIND-NAME BYE ;')
+/* ^ gdb a.out: break bye_code => p stack */
 
 void _start(void)
 {
+	*forth_ptr=LIT(m4_last);
+	/* ^ TODO: Is there a better place to accomplish this? */
 	next((cell_t *)XT(entry),stack,rstack);
 }
 m4_include(.edit_warning)m4_dnl
