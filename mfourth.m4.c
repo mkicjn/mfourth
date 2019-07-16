@@ -431,7 +431,7 @@ m4_forth(m4_include(`fth/interpret_name.fth'))
 m4_forth(m4_include(`fth/interpret.fth'))
 m4_forth(m4_include(`fth/evaluate.fth'))
 m4_forth(m4_include(`fth/quit.fth'))
-m4_forth(`: ABORT ( abort ) S0 SP! QUIT ;')
+m4_forth(m4_include(`fth/abort.fth'))
 
 	/* Executable entry */
 
