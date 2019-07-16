@@ -50,7 +50,7 @@ struct {
 	{$2_code,exit_code}
 };
 m4_define(`m4_last',`&$2_defn.link')m4_dnl
-m4_addsubst(` $1 ',`$2_code, ')m4_dnl
+m4_addsubst(` $1 ',` $2_code, ')m4_dnl
 void $2_code(cell_t *ip,cell_t *sp,cell_t *rp)m4_dnl
 ')
 
@@ -100,16 +100,16 @@ m4_define(`m4_2op',`{
 
 	Constants/Variables
 
-m4_define(`m4_variable',`m4_dnl
+m4_define(`m4_allot',`m4_ifelse(m4_eval($1>1),`0',`LIT(0)',`LIT(0),m4_allot(m4_eval($1-1))')')
+m4_define(`m4_create',`m4_dnl
 m4_forthword(`$1',`$2',
-	PUSH(&$2_defn.xt[3]),exit_code,LIT($3)
-)
-#define $2_ptr (&$2_defn.xt[3])')
+	PUSH(&$2_defn.xt[3]),exit_code,m4_shift(m4_shift($*))
+)')
+m4_define(`m4_variable',`m4_create(`$1',$2,LIT($3))')
 m4_define(`m4_constant',`m4_dnl
 m4_forthword(`$1',`$2',
 	PUSH($3),exit_code
-)
-#define $2_ptr (&$2_defn.xt[1])')
+)')
 
 	Control structures
 

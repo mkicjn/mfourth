@@ -366,8 +366,8 @@ m4_forth(`: C, ( charcomma ) HERE ! 1 ALLOT ;')
 char tib[TIB_SIZE];
 m4_constant(`TIB',tib,tib)
 m4_constant(``/TIB'',per_tib,TIB_SIZE)
-m4_variable(`SOURCE&',source_addr,tib);
-m4_variable(``SOURCE#'',source_len,0);
+m4_variable(`SOURCE&',source_addr,tib)
+m4_variable(``SOURCE#'',source_len,0)
 m4_variable(`>IN',in,0)
 
 m4_forth(`: SOURCE ( source ) SOURCE& @ SOURCE# @ ;')
