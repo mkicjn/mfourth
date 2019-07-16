@@ -402,7 +402,8 @@ m4_forth(m4_include(`fth/to_number.fth'))
 m4_forth(m4_include(`fth/to_char.fth'))
 m4_forth(m4_include(`fth/is_number.fth'))
 
-m4_constant(`IMMEDIACY',IMMEDIACY,(ucell_t)1<<((sizeof(cell_t)*8)-1))
+m4_define(`m4_imm',`(ucell_t)1<<((sizeof(cell_t)*8)-1)')
+m4_constant(`IMMEDIACY',immediacy,m4_imm)
 m4_forth(`: LINK>NAME ( link_to_name ) CELL+ DUP @ SWAP CELL+ @ IMMEDIACY INVERT AND ;')
 m4_forth(`: LINK>XT ( link_to_xt ) 3 CELLS + ;')
 m4_forth(m4_include(`fth/search_wordlist.fth'))
@@ -411,18 +412,31 @@ m4_variable(`FORTH',forth,0) /* Filled in later */
 m4_create(`CONTEXT',context,LIT(forth_ptr),m4_allot(15))
 m4_variable(``#ORDER'',n_order,1)
 m4_constant(`WORDLISTS',wordlists,16)
-
 m4_forth(m4_include(`fth/find_name.fth'))
+
+m4_variable(`STATE',state,0)
+m4_forth(`: COMPILE, ( compile )
+	DUP CELL+ @ `m4_xt( EXIT )' = IF1
+		@ ,
+	ELSE1
+		DOLIT DOCOL , ,
+	THEN1
+;')
+m4_forth(`: LITERAL IMMEDIATE ( literal ) DOLIT DOLIT , , ;')
+
+m4_forth(m4_include(`fth/handle_xt.fth'))
+m4_forth(m4_include(`fth/handle_n.fth'))
+m4_forth(m4_include(`fth/interpret_name.fth'))
 
 	/* Testing area */
 
-m4_forth(`: ENTRY ( entry ) REFILL DROP PARSE-NAME FIND-NAME BYE ;')
+m4_forth(`: ENTRY ( entry ) REFILL DROP PARSE-NAME INTERPRET-NAME BYE ;')
 /* ^ gdb a.out: break bye_code => p stack */
 
 void _start(void)
 {
 	*forth_ptr=LIT(m4_last);
 	/* ^ TODO: Is there a better place to accomplish this? */
-	next((cell_t *)XT(entry),stack,rstack);
+	next((cell_t *)&entry_defn.xt,stack,rstack);
 }
 m4_include(.edit_warning)m4_dnl

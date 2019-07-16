@@ -16,6 +16,7 @@ m4_define(`m4_remempty',`m4_patsubst(`$*',`,$',`')')
 m4_addsubst(` \(-?[0-9]+\) ',` PUSH(\1), ')
 m4_addsubst(` ( [^)]*) ',`')
 m4_addsubst(`: +\([^ ]*\) +( +\([^ )]*\) +)',`m4_forthword(`\1',\2, ')
+m4_addsubst(`: +\([^ ]*\) +IMMEDIATE +( +\([^ )]*\) +)',`m4_immword(`\1',\2, ')
 m4_addsubst(` ;',` exit_code)')
 m4_addsubst(` BEGIN \(.*?\) WHILE \(.*?\) REPEAT ',` m4_BEGIN_WHILE_REPEAT(`\1',`\2'), ')
 m4_addsubst(` BEGIN \(.*?\) UNTIL ',` m4_BEGIN_UNTIL(`\1'), ')
@@ -56,19 +57,32 @@ void $2_code(cell_t *ip,cell_t *sp,cell_t *rp)m4_dnl
 
 	Non-primitive word definition
 
+m4_define(`m4_chomp',`m4_patsubst(`$@',`
+$',`')')
+m4_define(`m4_imm',`(ucell_t)1<<(sizeof(cell_t)*8-1)')
+m4_define(`m4_immword',`m4_dnl
+struct {
+	link_t link;
+	prim_t xt[m4_eval($#-2)];
+} $2_defn = {
+	{m4_last,"$1",(m4_imm)|m4_len($1)},
+	{m4_chomp(m4_shift(m4_shift($@)))}
+};m4_dnl
+m4_define(`m4_last',`&$2_defn.link')m4_dnl
+m4_addsubst(` $1 ',` docol_code,(prim_t)&$2_defn.xt, ')m4_dnl
+')
 m4_define(`m4_forthword',`m4_dnl
 struct {
 	link_t link;
 	prim_t xt[m4_eval($#-2)];
 } $2_defn = {
 	{m4_last,"$1",m4_len($1)},
-	{m4_shift(m4_shift($@))}
+	{m4_chomp(m4_shift(m4_shift($@)))}
 };m4_dnl
 m4_define(`m4_last',`&$2_defn.link')m4_dnl
 m4_addsubst(` $1 ',` docol_code,(prim_t)&$2_defn.xt, ')m4_dnl
 ')
 m4_define(`LIT',`(prim_t)($1)')
-m4_define(`XT',`&$1_defn.xt')
 m4_define(`PUSH',`dolit_code,LIT($1)')
 
 	Register operations
@@ -102,16 +116,12 @@ m4_define(`m4_2op',`{
 
 m4_define(`m4_allot',`m4_ifelse(m4_eval($1>1),`0',`LIT(0)',`LIT(0),m4_allot(m4_eval($1-1))')')
 m4_define(`m4_create',`m4_dnl
-m4_forthword(`$1',`$2',
-	PUSH(&$2_defn.xt[3]),exit_code,m4_shift(m4_shift($*))
-)
+m4_forthword(`$1',`$2',PUSH(&$2_defn.xt[3]),exit_code,m4_shift(m4_shift($*)))
 #define $2_ptr (&$2_defn.xt[3])
 ')
 m4_define(`m4_variable',`m4_create(`$1',$2,LIT($3))')
 m4_define(`m4_constant',`m4_dnl
-m4_forthword(`$1',`$2',
-	PUSH($3),exit_code
-)
+m4_forthword(`$1',`$2',PUSH($3),exit_code)
 #define $2_ptr (&$2_defn.xt[1])
 ')
 

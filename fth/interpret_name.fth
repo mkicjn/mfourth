@@ -1,0 +1,10 @@
+: INTERPRET-NAME ( interpret_name ) ( c-addr u -- i*x )
+	FIND-NAME DUP IF1
+		HANDLE-XT
+	ELSE1 DROP IS-NUMBER? IF2
+		HANDLE-#
+	ELSE2
+		TYPE 63 EMIT CR
+		BYE ( ABORT )
+	THEN2 THEN1
+;
