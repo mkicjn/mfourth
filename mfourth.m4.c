@@ -264,6 +264,12 @@ m4_cword(`2>R',two_to_r)
 	rp[2]=sp[0];
 	next(ip,sp-2,rp+2);
 }
+m4_cword(`2R>',two_r_from)
+{
+	sp[1]=rp[-1];
+	sp[2]=rp[0];
+	next(ip,sp+2,rp-2);
+}
 /* TODO: More double-cell words */
 
 	/* Double/Mixed-width Arithmetic */
@@ -396,11 +402,23 @@ m4_forth(m4_include(`fth/to_number.fth'))
 m4_forth(m4_include(`fth/to_char.fth'))
 m4_forth(m4_include(`fth/is_number.fth'))
 
-	/* Testing area */
+m4_constant(`IMMEDIACY',IMMEDIACY,(ucell_t)1<<((sizeof(cell_t)*8)-1))
+m4_forth(`: LINK>NAME ( link_to_name ) CELL+ DUP @ SWAP CELL+ @ IMMEDIACY INVERT AND ;')
+m4_forth(`: LINK>XT ( link_to_xt ) 3 CELLS + ;')
+m4_forth(m4_include(`fth/search_wordlist.fth'))
 
-m4_dnl/* This is to fix syntax highlighting after the question mark
+m4_variable(`FORTH',forth,m4_last)
+m4_variable(``#ORDER'',n_order,1)
+m4_create(`CONTEXT',context,LIT(forth_ptr),m4_allot(15))
+m4_constant(`WORDLISTS',wordlists,16)
+
+m4_forth(m4_include(`fth/find_name.fth'))
+
+	/* Testing area */
+/*`
 m4_forth(`: ENTRY ( entry ) REFILL DROP PARSE-NAME IS-NUMBER? IF EMIT THEN BYE ;')
-m4_dnl*/
+'*/
+m4_forth(`: ENTRY ( entry ) REFILL DROP PARSE-NAME FIND-NAME BYE ;')
 
 void _start(void)
 {

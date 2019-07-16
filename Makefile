@@ -29,4 +29,4 @@ cleaner: clean
 	rm -f a.out
 .PHONY: cleanest
 cleanest: cleaner
-	rm -f .*~ *~
+	rm -f .*~ *~ */.*~ */*~
