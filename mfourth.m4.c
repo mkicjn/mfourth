@@ -408,8 +408,8 @@ m4_forth(`: LINK>NAME ( link_to_name ) CELL+ DUP @ SWAP CELL+ @ IMMEDIACY INVERT
 m4_forth(`: LINK>XT ( link_to_xt ) 3 CELLS + ;')
 m4_forth(m4_include(`fth/search_wordlist.fth'))
 
-m4_variable(`FORTH',forth,0) /* Initialized in _start */
-m4_create(`CONTEXT',context,LIT(forth_ptr),m4_allot(15))
+m4_variable(`FORTH-WORDLIST',forth_wordlist,0) /* Initialized in _start */
+m4_create(`CONTEXT',context,LIT(forth_wordlist_ptr),m4_allot(15))
 m4_variable(``#ORDER'',n_order,1)
 m4_constant(`WORDLISTS',wordlists,16)
 m4_forth(m4_include(`fth/find_name.fth'))
@@ -446,11 +446,24 @@ abort_t abort_defn = {
 };
 m4_define(`m4_last',`&abort_defn.link')
 
+m4_forth(m4_include(`fth/get_current.fth'))
+m4_forth(m4_include(`fth/cmove.fth'))
+m4_forth(m4_include(`fth/aligned.fth'))
+m4_forth(m4_include(`fth/align.fth'))
+m4_forth(`: HEADER ( header ) ( c-addr u -- )
+	HERE OVER 2>R
+	HERE SWAP CMOVE
+	R@ ALLOT
+	ALIGN
+	HERE GET-CURRENT DUP @ , !
+	R> R> , ,
+;')
+
 	/* Executable entry */
 
 void _start(void)
 {
-	*forth_ptr=LIT(m4_last);
+	*forth_wordlist_ptr=LIT(m4_last);
 	/* ^ TODO: Is there a better place to accomplish this? */
 	next((cell_t *)&quit_defn.xt,stack,rstack);
 }
