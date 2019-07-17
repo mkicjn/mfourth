@@ -13,7 +13,7 @@
 				EXIT
 			THEN2
 		ELSE1
-			2DROP
+			2DROP 2DROP
 		THEN1
 		R> @
 	REPEAT
