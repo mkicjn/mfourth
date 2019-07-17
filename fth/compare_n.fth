@@ -1,5 +1,5 @@
 : COMPARE-# ( compare_n ) ( c-addr1 c-addr2 u -- -1|0|1 )
-	BEGIN DUP 0>= WHILE
+	BEGIN DUP 0> WHILE
 		>R
 		OVER C@ OVER C@ -
 		1 MIN -1 MAX

@@ -381,7 +381,7 @@ m4_forth(`: SOURCE! ( source_store ) SOURCE# ! SOURCE& ! ;')
 m4_forth(`: SOURCE-ID ( source_id ) SOURCE& @ TIB <> ;')
 
 m4_forth(`: EXTRACT ( extract ) 1- SWAP 1+ SWAP OVER 1- C@ ;')
-m4_forth(`: TYPE ( type ) BEGIN DUP 0> WHILE EXTRACT EMIT REPEAT ;')
+m4_forth(`: TYPE ( type ) BEGIN DUP 0> WHILE EXTRACT EMIT REPEAT 2DROP ;')
 
 m4_forth(m4_include(`fth/accept.fth'))
 m4_forth(m4_include(`fth/refill.fth'))
@@ -424,14 +424,26 @@ m4_forth(`: COMPILE, ( compile )
 ;')
 m4_forth(`: LITERAL IMMEDIATE ( literal ) DOLIT DOLIT , , ;')
 
+/* Forward declarations to resolve a circular dependency */
+m4_addsubst(` ABORT ',` docol_code,(prim_t)&abort_defn.xt, ')
+typedef struct { link_t link; prim_t xt[6]; } abort_t;
+/* ^ typedef to prevent double declaration as other type */
+abort_t abort_defn;
+
 m4_forth(m4_include(`fth/handle_xt.fth'))
 m4_forth(m4_include(`fth/handle_n.fth'))
 m4_forth(m4_include(`fth/interpret_name.fth'))
-
 m4_forth(m4_include(`fth/interpret.fth'))
+
 m4_forth(m4_include(`fth/evaluate.fth'))
 m4_forth(m4_include(`fth/quit.fth'))
-m4_forth(m4_include(`fth/abort.fth'))
+
+/*`m4_forth(m4_include(`fth/abort.fth'))'*/
+abort_t abort_defn = {
+	{&quit_defn.link,"ABORT",5},
+	{docol_code,(prim_t)&s_naught_defn.xt,spstore_code,docol_code,(prim_t)&quit_defn.xt,exit_code}
+};
+m4_define(`m4_last',`&abort_defn.link')
 
 	/* Executable entry */
 
