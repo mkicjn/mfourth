@@ -415,6 +415,7 @@ m4_constant(`WORDLISTS',wordlists,16)
 m4_forth(m4_include(`fth/find_name.fth'))
 
 m4_variable(`STATE',state,0)
+m4_forth(m4_include(`fth/brackets.fth'))
 m4_forth(`: COMPILE, ( compile )
 	DUP CELL+ @ `m4_xt( EXIT )' = IF1
 		@ ,

@@ -33,7 +33,7 @@ m4_addsubst(` IF3 \(.*?\) ELSE3 \(.*?\) THEN3 ',` m4_IF_ELSE(`\1',`\2'), ')
 m4_addsubst(` IF4 \(.*?\) ELSE4 \(.*?\) THEN4 ',` m4_IF_ELSE(`\1',`\2'), ')
 	^ Lazy hack for nesting conditionals (sorry)
 
-m4_define(`m4_escquants',`m4_patsubst(`$1',`[+*?]',`\\\&')')
+m4_define(`m4_escquants',`m4_patsubst(`$1',`[+\[*?]',`\\\&')')
 m4_define(`m4_addsubst',`m4_define(`m4_substlist',m4_quote(m4_escctrls(m4_escquants(`$1')),`$2',m4_substlist))')
 	^ Make addsubst safe for names containing quantifiers, e.g. 2* and M+
 
@@ -107,8 +107,8 @@ m4_define(`m4_1op',`{
 	next(ip,sp,rp);
 }')
 m4_define(`m4_2op',`{
-	cell_t a=sp[-1],b=sp[0];
-	sp[-1]=$2(($3cell_t)a$1($3cell_t)b);
+	$3cell_t a=sp[-1],b=sp[0];
+	sp[-1]=$2(a$1b);
 	next(ip,sp-1,rp);
 }')
 
