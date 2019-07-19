@@ -1,17 +1,23 @@
 : IS-NUMBER? ( is_number ) ( c-addr u -- n ~0 | c-addr u 0 )
-	>CHAR IF1 -1 EXIT THEN1
+	IS-CHAR? IF1 2RDROP -1 EXIT THEN1
 	2DUP
-	>BASE BASE DUP @ >R !
+	BASE @ >R >BASE BASE !
 	>SIGN >R
-	0 DUP 2SWAP
-	>NUMBER NIP NIP IF2
-		DROP
+	DUP 0> IF2
+		0 DUP 2SWAP
+		>NUMBER NIP NIP IF3
+			DROP
+			RDROP
+			0
+		ELSE3
+			NIP NIP
+			R> IF3 NEGATE THEN3
+			-1
+		THEN3
+	ELSE2
+		2DROP
 		RDROP
 		0
-	ELSE2
-		NIP NIP
-		R> IF3 NEGATE THEN3
-		-1
 	THEN2
 	R> BASE !
 ;

@@ -270,6 +270,16 @@ m4_cword(`2R>',two_r_from)
 	sp[2]=rp[0];
 	next(ip,sp+2,rp-2);
 }
+m4_cword(`2R@',two_rfetch)
+{
+	sp[1]=rp[-1];
+	sp[2]=rp[0];
+	next(ip,sp+2,rp);
+}
+m4_cword(`2RDROP',two_rdrop)
+{
+	next(ip,sp,rp-2);
+}
 /* TODO: More double-cell words */
 
 	/* Double/Mixed-width Arithmetic */
@@ -395,11 +405,12 @@ m4_forth(m4_include(`fth/compare_n.fth'))
 m4_forth(m4_include(`fth/compare.fth'))
 
 m4_variable(`BASE',base,10)
+m4_forth(m4_include(`fth/in_range.fth'))
 m4_forth(m4_include(`fth/digit.fth'))
 m4_forth(m4_include(`fth/to_base.fth'))
 m4_forth(m4_include(`fth/to_sign.fth'))
 m4_forth(m4_include(`fth/to_number.fth'))
-m4_forth(m4_include(`fth/to_char.fth'))
+m4_forth(m4_include(`fth/is_char.fth'))
 m4_forth(m4_include(`fth/is_number.fth'))
 
 m4_define(`m4_imm',`(ucell_t)1<<((sizeof(cell_t)*8)-1)')

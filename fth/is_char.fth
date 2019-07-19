@@ -1,4 +1,4 @@
-: >CHAR ( to_char ) ( c-addr u -- u ~0 | c-addr u 0 )
+: IS-CHAR? ( is_char ) ( c-addr u -- u ~0 | c-addr u 0 )
 	DUP 3 <> IF1
 		0 EXIT
 	THEN1

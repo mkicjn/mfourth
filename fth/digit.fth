@@ -1,17 +1,7 @@
-: DIGIT ( digit ) ( char -- val )
-	48 -
-	DUP 0 < IF1
-		EXIT
-	ELSE1 DUP 10 > IF2
-		7 -
-	ELSE2
-		EXIT
-	THEN1 THEN2
-	DUP 0 < IF3
-		EXIT
-	ELSE3 DUP 35 > IF4
-		32 -
-	ELSE4
-		EXIT
-	THEN3 THEN4
+: DIGIT ( digit ) ( char -- -1|val )
+	48 - DUP 0 9 IN-RANGE? IF1 EXIT THEN1
+	7 - DUP 10 35 IN-RANGE? IF2 EXIT THEN2
+	32 - DUP 10 35 IN-RANGE? IF3 EXIT THEN3
+	DROP
+	-1
 ;
