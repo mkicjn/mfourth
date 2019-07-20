@@ -15,7 +15,7 @@ m4_define("`m4_dosubsts'","`m4_ifelse("`$2'","`'","`$1'","`m4_dosubsts(m4_quote(
 m4_define("`m4_forth2m4'","`m4_dosubsts(m4_escctrls("`$1'"),m4_substlist)'")
 
 m4_addsubst("`: \([^ ]*\) ( \([^ )]*\) ) '","`m4_forthword("`\1'", \2, '")
-m4_addsubst("` ;'","` exit_code ) '")
+m4_addsubst("` ;'","` exit_code) '")
 m4_addsubst("` \(-?[0-9]+\) '","` PUSH(\1), '")
 m4_addsubst("` IF '","` m4_IF(<! '")
 m4_addsubst("` ELSE '","` !>,<! '")
@@ -31,7 +31,7 @@ struct {
 	link_t link;
 	prim_t xt[m4_eval($#-2)];
 } $2_defn = {
-	{m4_last,"$1",m4_len($1)},
+	{m4_last,"$1",m4_len("`$1'")},
 m4_changequote("`<!'","`!>'")m4_dnl
 	{m4_shift(m4_shift($*))}
 m4_changequote(<!"`!>,<!'"!>)m4_dnl
@@ -44,12 +44,26 @@ m4_define("`PUSH'","`dolit_code,LIT($1)'")
 
 ################################################################################
 
+m4_define("`m4_count'","`$#'")
+
+m4_define("`m4_IF'","`zbranch_code,LIT(m4_eval(m4_count($1)+m4_ifelse("`$2'","`'",1,3))*sizeof(cell_t)),"`$1'"m4_dnl
+m4_ifelse("`$2'","`'","`'","`,branch_code,LIT(m4_eval(m4_count($2)+1)*sizeof(cell_t)),$2'")'")
+
+################################################################################
+
 m4_divert(0)m4_dnl
 m4_addsubst("` DUP '","` dup_code, '")m4_dnl
 m4_addsubst("` EMIT '","` emit_code, '")m4_dnl
 m4_addsubst("` C, '","` charcomma_code, '")m4_dnl
 m4_addsubst("` DROP '","` drop_code, '")m4_dnl
+m4_define("`m4_teststring'","`: TEST ( test ) DUP IF DUP ELSE DROP THEN ;'")m4_dnl
 
-m4_forth2m4("`: ?EMIT, ( qemitcomma ) DUP IF DUP EMIT C, ELSE DROP THEN ;'")
+Forth code:
+m4_teststring
 
-m4_forthword("`AAA'",aaa,dolit_code,(prim_t)65,emit_code,exit_code)
+m4 code:
+m4_forth2m4(m4_teststring)
+
+Expanded:
+m4_expand(m4_forth2m4(m4_teststring))
+
