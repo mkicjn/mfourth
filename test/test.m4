@@ -13,7 +13,9 @@ m4_define("`m4_addsubst'","`m4_define("`m4_substlist'",m4_quote("`$1'","`$2'",m4
 
 m4_define("`m4_dosubsts'","`m4_ifelse("`$2'","`'","`$1'","`m4_dosubsts(m4_quote(m4_patsubst(m4_quote($1),"`$2'","`$3'")),m4_shift(m4_shift(m4_shift($@))))'")'")
 m4_define("`m4_unparen'","`m4_patsubst("`$@'","`(\(.*\))'","`\1'")'")m4_dnl
-m4_define("`m4_forth2m4'","`m4_dosubsts(m4_unparen("`$@'"),m4_substlist)'")
+m4_define("`m4_remform'","`m4_patsubst("`$@'","`[ 	
+]+'","` '")'")m4_dnl
+m4_define("`m4_forth2m4'","`m4_dosubsts(m4_unparen(m4_remform("`$@'")),m4_substlist)'")
 
 m4_addsubst("`: \([^ ]*\) ( \([^ )]*\) ) '","`m4_forthword("`\1'", \2, '")
 m4_addsubst("` ;'","` exit_code) '")
@@ -66,13 +68,13 @@ m4_forth2m4((m4_teststring))
 Expanded:
 m4_expand(m4_forth2m4((m4_teststring)))
 
-m4_define("`m4_teststring'","`: ?, ( qcomma ) DUP IF , ELSE DROP THEN ;'")m4_dnl
+m4_define("`m4_teststring'","`'")m4_dnl
 
 Forth code:
-m4_teststring
+m4_include(includetest.fth)
 
 m4 code:
-m4_forth2m4((m4_teststring))
+m4_forth2m4((m4_include(includetest.fth)))
 
 Expanded:
-m4_expand(m4_forth2m4((m4_teststring)))
+m4_expand(m4_forth2m4((m4_include(includetest.fth))))
