@@ -5,7 +5,6 @@ m4_changequote(<!"`!>,<!'"!>)
 ################################################################################
 
 m4_define("`m4_quote'","`"`$@'"'")
-m4_define("`m4_xquote'","`"`$*'"'")
 m4_define("`m4_expand'","`$*'")
 m4_define("`m4_count'","`$#'")
 
@@ -25,6 +24,8 @@ m4_addsubst("` THEN '","` !>), '")
 
 ################################################################################
 
+m4_define("`m4_shifts'","`m4_ifelse(m4_eval($1>0),1,<!m4_shifts(m4_eval($1-1),m4_shift(m4_shift($@)))!>,<!m4_shift($@)!>)'")
+
 m4_define("`m4_last'","`(void *)0'")
 m4_define("`m4_forthword'","`m4_dnl
 struct {
@@ -33,7 +34,7 @@ struct {
 } $2_defn = {
 	{m4_last,""`$1'"",m4_len("`$1'")},
 m4_changequote("`<!'","`!>'")m4_dnl
-	{m4_shift(m4_shift($*))}
+	{m4_shifts(m4_count($1),m4_shift($*))}
 m4_changequote(<!"`!>,<!'"!>)m4_dnl
 };m4_dnl
 m4_define("`m4_last'","`&$2_defn.link'")m4_dnl
