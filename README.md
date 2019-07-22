@@ -21,4 +21,4 @@ but mostly because I wanted to avoid all extensions, including labels as values.
 
 I would also consider adding TOS optimization in the future, but this is uncertain.
 
-***Please bear in mind that this code is _NOT_ expected to be easily maintainable; it's mostly an exercise in "macro-mancy".***
+***Please bear in mind: this code is _NOT_ expected to be easily maintainable; it's an exercise in "macro-mancy".***
