@@ -466,6 +466,8 @@ m4_import("`fth/to_body.fth'")
 m4_import("`fth/create.fth'")
 m4_import("`fth/does.fth'")
 
+m4_import("`fth/defer.fth'")
+
 	/* Executable entry */
 
 void _start(void)
