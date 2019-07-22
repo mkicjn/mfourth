@@ -1,6 +1,9 @@
 m4_divert(-1)
 m4_changequote(`<!',`!>')
 m4_changequote(<!"`!>,<!'"!>)
+^ I chose these quotes to avoid breaking syntax highlighting in m4 or C sources.
+m4_changecom("`'","`'")
+^ This is to avoid breaking things with a number sign in their name.
 
 ################################################################################
 
@@ -85,7 +88,7 @@ m4_addsubst("` DUP '","`dup_code,'")m4_dnl
 m4_addsubst("` OVER '","`over_code,'")m4_dnl
 m4_addsubst("` EMIT '","`emit_code,'")m4_dnl
 m4_addsubst("` , '","`comma_code,'")m4_dnl
-m4_define("`m4_teststring'","`: TEST1 ( test1 ) DUP BEGIN DUP EMIT WHILE DROP DROP REPEAT ;'")m4_dnl
+m4_define("`m4_teststring'","`: TEST#1 ( test1 ) DUP BEGIN DUP EMIT WHILE DROP DROP REPEAT ;'")m4_dnl
 Forth code:
 m4_teststring
 
