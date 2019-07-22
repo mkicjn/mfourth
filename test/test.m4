@@ -1,9 +1,9 @@
 m4_divert(-1)
 m4_changequote(`<!',`!>')
 m4_changequote(<!"`!>,<!'"!>)
-^ I chose these quotes to avoid breaking syntax highlighting in m4 or C sources.
+	^ I chose these quotes to avoid breaking syntax highlighting in m4 or C sources.
 m4_changecom("`'","`'")
-^ This is to avoid breaking things with a number sign in their name.
+	^ This is to avoid breaking things with a number sign in their name.
 
 ################################################################################
 
@@ -15,7 +15,7 @@ m4_define("`m4_npcount'","`m4_count(m4_expand(m4_patsubst("`$@'","`[()]'",)))'")
 m4_define("`m4_substlist'","`"`, *)'","`)'"'")
 m4_define("`m4_addsubst'","`m4_define("`m4_substlist'",m4_quote("`$1'","`$2'",m4_substlist))'")
 
-m4_define("`m4_dosubsts'","`m4_ifelse("`$2'","`'","`$1'","`m4_dosubsts(m4_quote(m4_patsubst(m4_quote($1),"`$2'","`$3'")),m4_shift(m4_shift(m4_shift($@))))'")'")
+m4_define("`m4_dosubsts'","`m4_ifelse("`$2'","`'","`$1'","`m4_dosubsts(m4_quote(m4_patsubst("`$1'","`$2'","`$3'")),m4_shift(m4_shift(m4_shift($@))))'")'")
 m4_define("`m4_unparen'","`m4_patsubst("`$@'","`(\(.*\))'","`\1'")'")m4_dnl
 m4_define("`m4_remform'","`m4_patsubst("`$@'","`[ 	
 ]+'","`  '")'")m4_dnl
@@ -36,6 +36,10 @@ m4_addsubst("` WHILE '","`),('")
 m4_addsubst("` REPEAT '","`)),'")
 m4_addsubst("` UNTIL '","`),UNTIL),'")
 m4_addsubst("` AGAIN '","`),AGAIN),'")
+
+m4_define("`m4_escquants'","`m4_patsubst("`$1'","`[+*\[?]'","`\\\&'")'")
+m4_define("`m4_addsubst'","`m4_define("`m4_substlist'",m4_quote(m4_unparen(m4_escquants(("`$1'"))),"`$2'",m4_substlist))'")
+	^ Make addsubst safe for names containing regexp quantifiers
 
 ################################################################################
 
@@ -84,27 +88,39 @@ branch_code,LIT(m4_eval(-m4_npcount($1,$2)-3)*sizeof(cell_t))'")'")
 
 ################################################################################
 
+m4_define("`m4_upcase'","`m4_translit("`$*'","`[a-z]'","`[A-Z]'")'")
+m4_define("`m4_regops'","`
+m4_prim(m4_upcase($1)@,$1fetch)
+{
+	sp[1]=(cell_t)$1;
+	next(ip,sp+1,rp);
+}
+m4_prim(m4_upcase($1)!,$1store)
+{
+	$1=(cell_t *)sp[0];
+	next(ip,sp-1,rp);
+}'")
+
+m4_define("`m4_1op'","`{
+	cell_t a=sp[0];
+	sp[0]=$2($1a$3);
+	next(ip,sp,rp);
+}'")
+m4_define("`m4_2op'","`{
+	$3cell_t a=sp[-1],b=sp[0];
+	sp[-1]=$2(a$1b);
+	next(ip,sp-1,rp);
+}'")
+
+m4_define("`m4_allot'","`m4_ifelse(m4_eval($1>1),"`0'","`LIT(0)'","`LIT(0),m4_allot(m4_eval($1-1))'")'")
+m4_define("`m4_create'","`m4_dnl
+m4_nonprim("`$1'","`$2'",PUSH(&$2_defn.xt[3]),exit_code,m4_shift(m4_shift($*)))
+#define $2_ptr (&$2_defn.xt[3])
+'")
+m4_define("`m4_variable'","`m4_create("`$1'",$2,LIT($3))'")
+m4_define("`m4_constant'","`m4_dnl
+m4_nonprim("`$1'","`$2'",PUSH($3),exit_code)
+#define $2_ptr (&$2_defn.xt[1])
+'")
+
 m4_divert(0)m4_dnl
-m4_addsubst("` DROP '","`drop_code,'")m4_dnl
-m4_addsubst("` DUP '","`dup_code,'")m4_dnl
-m4_addsubst("` OVER '","`over_code,'")m4_dnl
-m4_addsubst("` EMIT '","`emit_code,'")m4_dnl
-m4_addsubst("` , '","`comma_code,'")m4_dnl
-m4_define("`m4_teststring'","`: TEST#1, ( test1 ) DUP BEGIN DUP EMIT WHILE DROP DROP REPEAT ;'")m4_dnl
-Forth code:
-m4_teststring
-
-m4 code:
-m4_forth2m4((m4_teststring))
-
-Expanded:
-m4_expand(m4_forth2m4((m4_teststring)))
-
-Forth code:
-m4_include(includetest.fth)
-
-m4 code:
-m4_forth2m4((m4_include(includetest.fth)))
-
-Expanded:
-m4_expand(m4_forth2m4((m4_include(includetest.fth))))
