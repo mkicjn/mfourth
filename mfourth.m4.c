@@ -467,6 +467,8 @@ m4_import("`fth/create.fth'")
 m4_import("`fth/does.fth'")
 
 m4_import("`fth/defer.fth'")
+m4_import("`fth/is.fth'")
+m4_import("`fth/action_of.fth'")
 
 	/* Executable entry */
 

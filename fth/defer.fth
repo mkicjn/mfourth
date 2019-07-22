@@ -1,8 +1,11 @@
 : DEFER ( defer ) ( "name" -- )
 	PARSE-NAME HEADER
-	['] ABORT COMPILE,
+	DOLIT DOCOL , ['] ABORT ,
 	['] EXIT COMPILE,
 ;
-: IS ( is ) ( "name" xt -- )
-	' CELL+ !
+: DEFER! ( defer_store ) ( xt1 xt2 -- )
+	CELL+ !
+;
+: DEFER@ ( defer_fetch ) ( xt1 -- xt2 )
+	CELL+ @
 ;
