@@ -88,7 +88,7 @@ m4_addsubst("` DUP '","`dup_code,'")m4_dnl
 m4_addsubst("` OVER '","`over_code,'")m4_dnl
 m4_addsubst("` EMIT '","`emit_code,'")m4_dnl
 m4_addsubst("` , '","`comma_code,'")m4_dnl
-m4_define("`m4_teststring'","`: TEST#1 ( test1 ) DUP BEGIN DUP EMIT WHILE DROP DROP REPEAT ;'")m4_dnl
+m4_define("`m4_teststring'","`: TEST#1, ( test1 ) DUP BEGIN DUP EMIT WHILE DROP DROP REPEAT ;'")m4_dnl
 Forth code:
 m4_teststring
 

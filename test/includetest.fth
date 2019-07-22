@@ -1,5 +1,6 @@
-: TEST#2 ( test2 ) ( a b -- )
+: TEST#2, ( test2 ) ( a b -- )
 	( this is a nonsense function to test the new macro system )
+	TEST#1,
 	IF
 		IF
 			65 ,
