@@ -1,12 +1,12 @@
 : HANDLE-XT ( handle_xt ) ( xt +/-1 -- i*x | )
-	STATE @ IF1
-		0> IF2
+	STATE @ IF
+		0> IF
 			EXECUTE
-		ELSE2
-			COMPILE`,'
-		THEN2
-	ELSE1
+		ELSE
+			COMPILE,
+		THEN
+	ELSE
 		DROP
 		EXECUTE
-	THEN1
+	THEN
 ;
