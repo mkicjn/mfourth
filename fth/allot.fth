@@ -1,0 +1,3 @@
+: ALLOT ( allot ) ( n -- )
+	DP +!
+;

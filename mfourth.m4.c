@@ -371,10 +371,9 @@ m4_prim("`CELLS'",cells)
 	next(ip,sp,rp);
 }
 
-m4_forth2c(("`: HERE ( here ) DP @ ;'"))
-m4_forth2c(("`: ALLOT ( allot ) DP +! ;'"))
-m4_forth2c(("`: , ( comma ) HERE ! CELL ALLOT ;'"))
-m4_forth2c(("`: C, ( charcomma ) HERE ! 1 ALLOT ;'"))
+m4_import("`fth/here.fth'")
+m4_import("`fth/allot.fth'")
+m4_import("`fth/comma.fth'")
 
 	/* Parsing */
 
