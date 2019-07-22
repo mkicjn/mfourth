@@ -14,4 +14,4 @@
 			68 ,
 		THEN
 	THEN
-;
+; IMMEDIATE

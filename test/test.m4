@@ -24,6 +24,7 @@ m4_define("`m4_forth2m4'","`m4_dosubsts(m4_unparen(m4_remform("`$@'")),m4_substl
 m4_addsubst("` ( [^)]*) '","`'")
 m4_addsubst("`: +\([^ ]+\) +( +\([^ )]+\) +) '","`m4_nonprim("`\1'",\2,('")
 m4_addsubst("` ;'","`exit_code))'")
+m4_addsubst("` ; +IMMEDIATE'","`exit_code),m4_imm)'")
 m4_addsubst("` \(-?[0-9]+\) '","`PUSH(\1),'")
 
 m4_addsubst("` IF '","`m4_IF(('")
@@ -55,12 +56,13 @@ void $2_code(cell_t *ip,cell_t *sp,cell_t *rp)m4_dnl
 ################################################################################
 
 m4_define("`m4_last'","`(void *)0'")
+m4_define("`m4_imm'","`((ucell_t)1<<((sizeof(cell_t)*8)-1))'")
 m4_define("`m4_nonprim'","`m4_dnl
 struct {
 	link_t link;
 	prim_t xt[m4_eval(m4_npcount($*)-2)];
 } $2_defn = {
-	{m4_last,""`$1'"",m4_len("`$1'")},
+	{m4_last,""`$1'"",m4_len("`$1'")m4_ifelse("`$4'",,,"`|$4'")},
 	{m4_unparen($3)}
 };m4_dnl
 m4_define("`m4_last'","`&$2_defn.link'")m4_dnl
