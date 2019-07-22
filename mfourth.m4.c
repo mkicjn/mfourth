@@ -461,6 +461,8 @@ m4_import("`fth/bracket_tick.fth'")
 m4_import("`fth/postpone.fth'")
 m4_import("`fth/colon.fth'")
 m4_import("`fth/semicolon.fth'")
+
+m4_import("`fth/to_body.fth'")
 m4_import("`fth/create.fth'")
 m4_import("`fth/does.fth'")
 

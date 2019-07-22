@@ -1,6 +1,6 @@
 : CREATE ( create ) ( "name" -- )
 	PARSE-NAME HEADER
-	HERE 5 CELLS + ( POSTPONE ) LITERAL
-	DOLIT BRANCH , CELL , ( prepare for DOES> )
+	HERE >BODY ( POSTPONE ) LITERAL
+	['] BRANCH COMPILE, CELL ,
 	['] EXIT COMPILE,
 ;
