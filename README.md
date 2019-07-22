@@ -1,6 +1,6 @@
-# mfourth (WIP)
+# mfourth
 ## Forth in a "fourth" of the C with m4
-*Not a single C function over 5 lines!*
+*No C functions over 5 lines!*
 
 The general idea is to implement Forth using as little (ANSI) C as possible.
 To do this, I wrote a set of macros in m4 capable of translating Forth into C, in some sense.
