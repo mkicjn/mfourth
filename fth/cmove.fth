@@ -7,4 +7,5 @@
 		1+ SWAP 1+ SWAP
 		R> 1-
 	REPEAT
+	DROP 2DROP
 ;
