@@ -32,7 +32,7 @@ m4_addsubst("` ;'","`exit_code))'")
 m4_addsubst("` ( [^)]*) '","`'")
 m4_addsubst("` \(-?[0-9]+\) '","`PUSH(\1),'")
 
-m4_define("`m4_xt'","`m4_ifelse("`$2'",,"`$1'","`$2'")'")
+m4_define("`m4_xt'","`m4_patsubst(m4_ifelse("`$2'",,"`$1'","`$2'"),"`\(.*\)_code'","`&\1_defn.xt'")'")
 m4_addsubst("` \['] +\([^ ]*\) '","`PUSH(m4_xt( \1 )),'")
 
 m4_addsubst("` IF '","`m4_IF(('")

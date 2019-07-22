@@ -1,4 +1,3 @@
 : LITERAL ( literal ) ( x -- )
-	DOLIT DOLIT ,
-	,
+	DOLIT DOLIT , ,
 ; IMMEDIATE

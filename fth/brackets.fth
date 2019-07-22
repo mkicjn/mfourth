@@ -1,2 +1,2 @@
-: [ ( rb ) 0 STATE ! ; IMMEDIATE
-: ] ( lb ) -1 STATE ! ;
+: [ ( lb ) 0 STATE ! ; IMMEDIATE
+: ] ( rb ) -1 STATE ! ;
