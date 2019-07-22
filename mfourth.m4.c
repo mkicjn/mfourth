@@ -450,7 +450,6 @@ m4_define("`m4_last'","`&abort_defn.link'")
 /* ^ Manually set m4_last to ABORT's dictionary link */
 
 m4_import("`fth/get_current.fth'")
-m4_import("`fth/latest.fth'")
 m4_import("`fth/immediate.fth'")
 m4_import("`fth/cmove.fth'")
 m4_import("`fth/aligned.fth'")

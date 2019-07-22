@@ -1,5 +1,5 @@
 : IMMEDIATE ( immediate ) ( -- )
 	IMMEDIACY
-	LATEST @ 2 CELLS +
+	GET-CURRENT @ 2 CELLS +
 	+! ( overflows if already immediate )
 ;
