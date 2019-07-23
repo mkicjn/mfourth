@@ -293,17 +293,16 @@ m4_prim("`UM*'",um_mul)
 m4_prim("`UM/MOD'",um_divmod)
 {
 #if defined(__x86_64__)
-	__asm__("divq %2"
-		:"=a"(sp[-2]),"=d"(sp[-1])
-		:"r"(sp[0]),"a"(sp[-2]),"d"(sp[-1])
-		:"%rax","%rdx"
+	__asm__("divq %4"
+		:"=d"(sp[-2]),"=a"(sp[-1])
+		:"d"(sp[-1]),"a"(sp[-2]),"r"(sp[0])
 		);
 #else
 	/* TODO: Produce the above on x86_64 without inline asm */
 	udcell_t a=*(udcell_t *)&sp[-2];
 	ucell_t b=sp[0];
-	sp[-2]=a/b;
-	sp[-1]=a%b;
+	sp[-2]=a%b;
+	sp[-1]=a/b;
 #endif
 	next(ip,sp-1,rp);
 }
@@ -342,11 +341,13 @@ m4_constant("`S0'",s_naught,stack)
 m4_constant("`R0'",r_naught,rstack)
 
 m4_constant("`D0'",d_naught,uarea)
+m4_constant("`D1'",d_one,&uarea[USER_AREA_SIZE])
 m4_variable("`DP'",dp,uarea)
 
 m4_constant("`BL'",bl,32)
-m4_forth2c(("`: SPACE ( space ) BL EMIT ;'"))
-m4_forth2c(("`: CR ( cr ) 10 EMIT ;'"))
+m4_import("`fth/space.fth'")
+m4_import("`fth/spaces.fth'")
+m4_import("`fth/cr.fth'")
 
 	/* Memory access */
 
@@ -389,6 +390,7 @@ m4_prim("`CELLS'",cells)
 }
 
 m4_import("`fth/here.fth'")
+m4_import("`fth/unused.fth'")
 m4_import("`fth/allot.fth'")
 m4_import("`fth/comma.fth'")
 
@@ -419,7 +421,7 @@ m4_import("`fth/compare_n.fth'")
 m4_import("`fth/compare.fth'")
 
 m4_variable("`BASE'",base,10)
-m4_import("`fth/in_range.fth'")
+m4_import("`fth/within.fth'")
 m4_import("`fth/digit.fth'")
 m4_import("`fth/to_base.fth'")
 m4_import("`fth/to_sign.fth'")
@@ -490,6 +492,15 @@ m4_import("`fth/action_of.fth'")
 
 m4_import("`fth/variable.fth'")
 m4_import("`fth/constant.fth'")
+
+m4_variable("`HOLD&'",hold_addr,0)
+m4_import("`fth/pad.fth'")
+m4_import("`fth/hold.fth'")
+m4_import("`fth/sign.fth'")
+m4_import("`fth/ud_divmod.fth'")
+m4_import("`fth/number.fth'")
+m4_import("`fth/numbers.fth'")
+m4_import("`fth/dot.fth'")
 
 	/* Executable entry */
 
