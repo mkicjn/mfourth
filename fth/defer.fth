@@ -1,5 +1,5 @@
 : DEFER ( defer ) ( "name" -- )
-	PARSE-NAME HEADER
+	PARSE-NAME MAKE-HEADER
 	DOLIT DOCOL , ['] ABORT ,
 	['] EXIT COMPILE,
 ;

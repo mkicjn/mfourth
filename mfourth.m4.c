@@ -454,7 +454,7 @@ m4_import("`fth/immediate.fth'")
 m4_import("`fth/cmove.fth'")
 m4_import("`fth/aligned.fth'")
 m4_import("`fth/align.fth'")
-m4_import("`fth/header.fth'")
+m4_import("`fth/make_header.fth'")
 
 m4_import("`fth/tick.fth'")
 m4_import("`fth/bracket_tick.fth'")
@@ -469,6 +469,9 @@ m4_import("`fth/does.fth'")
 m4_import("`fth/defer.fth'")
 m4_import("`fth/is.fth'")
 m4_import("`fth/action_of.fth'")
+
+m4_import("`fth/variable.fth'")
+m4_import("`fth/constant.fth'")
 
 	/* Executable entry */
 

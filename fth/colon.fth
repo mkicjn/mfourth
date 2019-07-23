@@ -1,3 +1,3 @@
 : : ( colon ) ( "name" -- )
-	PARSE-NAME HEADER ]
+	PARSE-NAME MAKE-HEADER ]
 ;

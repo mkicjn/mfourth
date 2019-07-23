@@ -1,0 +1,3 @@
+: VARIABLE ( variable )
+	CREATE CELL ALLOT
+;

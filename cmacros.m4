@@ -122,8 +122,8 @@ m4_define("`m4_2op'","`{
 
 m4_define("`m4_allot'","`m4_ifelse(m4_eval($1>1),"`0'","`LIT(0)'","`LIT(0),m4_allot(m4_eval($1-1))'")'")
 m4_define("`m4_create'","`m4_dnl
-m4_nonprim("`$1'","`$2'",(PUSH(&$2_defn.xt[3]),exit_code,m4_shift(m4_shift($*))))
-#define $2_ptr (&$2_defn.xt[3])
+m4_nonprim("`$1'","`$2'",(PUSH(&$2_defn.xt[5]),branch_code,LIT(sizeof(cell_t)),exit_code,m4_shift(m4_shift($*))))
+#define $2_ptr (&$2_defn.xt[5])
 '")
 m4_define("`m4_variable'","`m4_create("`$1'",$2,LIT($3))'")
 m4_define("`m4_constant'","`m4_dnl
