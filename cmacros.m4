@@ -78,9 +78,9 @@ struct {
 	{m4_unparen($3)}
 };m4_dnl
 m4_define("`m4_last'","`&$2_defn.link'")m4_dnl
-m4_addsubst("` $1 '","`docol_code,(prim_t)&$2_defn.xt,'")m4_dnl
+m4_addsubst("` $1 '","`docol_code,LIT(&$2_defn.xt),'")m4_dnl
 '")
-m4_define("`LIT'","`(prim_t)($1)'")
+m4_define("`LIT'","`(prim_t)(cell_t)($1)'")
 m4_define("`PUSH'","`dolit_code,LIT($1)'")
 
 ################################################################################

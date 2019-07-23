@@ -290,6 +290,22 @@ m4_prim("`UM*'",um_mul)
 	*(udcell_t *)&sp[-1]=(udcell_t)a*b;
 	next(ip,sp,rp);
 }
+m4_prim("`UM/MOD'",um_divmod)
+{
+#if defined(__x86_64__)
+	__asm__("divq %2"
+		:"=a"(sp[-2]),"=d"(sp[-1])
+		:"r"(sp[0]),"a"(sp[-2]),"d"(sp[-1])
+		:"%rax","%rdx"
+		);
+#else
+	/* TODO: Produce the above on x86_64 without inline asm */
+	ucell_t a0=sp[-1],a1=sp[-2],b=sp[0];
+	sp[-2]=a/b;
+	sp[-1]=a%b;
+#endif
+	next(ip,sp-1,rp);
+}
 m4_prim("`M+'",m_add)
 {
 	*(dcell_t *)&sp[-2]+=sp[0];
@@ -428,7 +444,7 @@ m4_import("`fth/compile.fth'")
 m4_import("`fth/literal.fth'")
 
 /* Forward declarations to resolve a circular dependency */
-m4_addsubst("` ABORT '","`docol_code,(prim_t)&abort_defn.xt,'")
+m4_addsubst("` ABORT '","`docol_code,LIT(&abort_defn.xt),'")
 typedef struct { link_t link; prim_t xt[6]; } abort_t;
 abort_t abort_defn;
 /* ^ typedef to prevent double declaration as other type */
@@ -444,7 +460,7 @@ m4_import("`fth/quit.fth'")
 /*"`m4_import("`fth/abort.fth'")'"*/
 abort_t abort_defn = {
 	{&quit_defn.link,"ABORT",5},
-	{docol_code,(prim_t)&s_naught_defn.xt,spstore_code,docol_code,(prim_t)&quit_defn.xt,exit_code}
+	{docol_code,(prim_t)(cell_t)&s_naught_defn.xt,spstore_code,docol_code,(prim_t)(cell_t)&quit_defn.xt,exit_code}
 };
 m4_define("`m4_last'","`&abort_defn.link'")
 /* ^ Manually set m4_last to ABORT's dictionary link */
