@@ -1,0 +1,20 @@
+: BEGIN ( begin )
+	HERE
+; IMMEDIATE
+: AGAIN ( again )
+	DOLIT BRANCH ,
+	HERE - ,
+; IMMEDIATE
+: UNTIL ( until )
+	DOLIT 0BRANCH ,
+	HERE - ,
+; IMMEDIATE
+: WHILE ( while )
+	DOLIT 0BRANCH , MARK
+	SWAP
+; IMMEDIATE
+: REPEAT ( repeat )
+	DOLIT BRANCH ,
+	HERE - ,
+	RESOLVE
+; IMMEDIATE

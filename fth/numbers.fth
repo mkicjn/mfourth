@@ -1,7 +1,6 @@
 : #S ( numbers )
 	BEGIN
-		2DUP OR
-	WHILE
 		#
-	REPEAT
+		2DUP OR 0=
+	UNTIL
 ;

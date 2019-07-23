@@ -503,6 +503,11 @@ m4_import("`fth/numbers.fth'")
 m4_import("`fth/dot.fth'")
 m4_import("`fth/query.fth'")
 
+m4_import("`fth/mark.fth'")
+m4_import("`fth/resolve.fth'")
+m4_import("`fth/if.fth'")
+m4_import("`fth/begin.fth'")
+
 	/* Executable entry */
 
 void _start(void)
