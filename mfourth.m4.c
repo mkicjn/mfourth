@@ -300,7 +300,8 @@ m4_prim("`UM/MOD'",um_divmod)
 		);
 #else
 	/* TODO: Produce the above on x86_64 without inline asm */
-	ucell_t a0=sp[-1],a1=sp[-2],b=sp[0];
+	udcell_t a=*(udcell_t *)&sp[-2];
+	ucell_t b=sp[0];
 	sp[-2]=a/b;
 	sp[-1]=a%b;
 #endif
@@ -444,6 +445,7 @@ m4_import("`fth/compile.fth'")
 m4_import("`fth/literal.fth'")
 
 /* Forward declarations to resolve a circular dependency */
+/* TODO: Is there a better way to do this? */
 m4_addsubst("` ABORT '","`docol_code,LIT(&abort_defn.xt),'")
 typedef struct { link_t link; prim_t xt[6]; } abort_t;
 abort_t abort_defn;
