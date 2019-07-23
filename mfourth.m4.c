@@ -501,6 +501,7 @@ m4_import("`fth/ud_divmod.fth'")
 m4_import("`fth/number.fth'")
 m4_import("`fth/numbers.fth'")
 m4_import("`fth/dot.fth'")
+m4_import("`fth/query.fth'")
 
 	/* Executable entry */
 
