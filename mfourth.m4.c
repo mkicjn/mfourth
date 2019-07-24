@@ -508,6 +508,8 @@ m4_import("`fth/resolve.fth'")
 m4_import("`fth/if.fth'")
 m4_import("`fth/begin.fth'")
 
+m4_import("`fth/comment.fth'")
+
 	/* Executable entry */
 
 void _start(void)

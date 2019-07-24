@@ -1,0 +1,3 @@
+: \ ( backslash ) ( -- )
+	SOURCE# @ >IN !
+; IMMEDIATE
