@@ -8,7 +8,7 @@
 ;
 : PARSE ( parse ) ( "<anychars><c>" c -- c-addr u )
 	>R
-	SOURCE >IN @ /STRING
+	SOURCE >IN @ 1+ /STRING
 	2DUP R> SCAN-TO-CHAR
 	NIP -
 	2DUP + SOURCE& @ - 1+ >IN !

@@ -51,14 +51,14 @@ m4_define("`m4_addsubst'","`m4_define("`m4_substlist'",m4_quote(m4_substlist,m4_
 
 ################################################################################
 
-m4_define("`m4_escbs'","`m4_patsubst("`$1'","`\\'","`\\\\'")'")
+m4_define("`m4_cstresc'","`m4_patsubst("`$1'","`[\\"]'","`\\\&'")'")
 m4_define("`m4_prim'","`m4_dnl
 void $2_code();
 struct {
 	link_t link;
 	prim_t xt[2];
 } $2_defn = {
-	{m4_last,m4_escbs("$1"),m4_len("`$1'")},
+	{m4_last,"m4_cstresc("`$1'")",m4_len("`$1'")},
 	{$2_code,exit_code}
 };
 m4_define("`m4_last'","`&$2_defn.link'")m4_dnl
@@ -75,7 +75,7 @@ struct {
 	link_t link;
 	prim_t xt[m4_eval(m4_npcount($3))];
 } $2_defn = {
-	{m4_last,"m4_escbs("`$1'")",m4_len("`$1'")m4_ifelse("`$4'",,,"`|$4'")},
+	{m4_last,"m4_cstresc("`$1'")",m4_len("`$1'")m4_ifelse("`$4'",,,"`|$4'")},
 	{m4_unparen($3)}
 };m4_dnl
 m4_define("`m4_last'","`&$2_defn.link'")m4_dnl

@@ -513,6 +513,10 @@ m4_import("`fth/bracket_char.fth'")
 
 m4_import("`fth/comments.fth'"))
 
+m4_import("`fth/sliteral.fth'")
+m4_import("`fth/s_quote.fth'")
+m4_import("`fth/dot_quote.fth'")
+
 	/* Executable entry */
 
 void _start(void)
