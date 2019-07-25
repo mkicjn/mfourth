@@ -4,11 +4,11 @@
 	2DUP
 	['] WHITESPACE SCAN-UNTIL
 	NIP -
-	2DUP + SOURCE& @ - >IN !
+	2DUP + SOURCE& @ - 1+ >IN !
 ;
 : PARSE ( parse ) ( "<anychars><c>" c -- c-addr u )
 	>R
-	SOURCE >IN @ 1+ /STRING
+	SOURCE >IN @ /STRING
 	2DUP R> SCAN-TO-CHAR
 	NIP -
 	2DUP + SOURCE& @ - 1+ >IN !
