@@ -517,6 +517,9 @@ m4_import("`fth/sliteral.fth'")
 m4_import("`fth/s_quote.fth'")
 m4_import("`fth/dot_quote.fth'")
 
+m4_import("`fth/depth.fth'")
+m4_import("`fth/dot_s.fth'")
+
 	/* Executable entry */
 
 void _start(void)
