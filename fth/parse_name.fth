@@ -1,8 +1,0 @@
-: PARSE-NAME ( parse_name ) ( -- c-addr u )
-	SOURCE >IN @ /STRING
-	['] NOT-WHITESPACE SKIP-UNTIL
-	2DUP
-	['] WHITESPACE SKIP-UNTIL
-	NIP -
-	2DUP + SOURCE& @ - >IN !
-;
