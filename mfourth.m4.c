@@ -413,9 +413,9 @@ m4_import("`fth/type.fth'")
 m4_import("`fth/accept.fth'")
 m4_import("`fth/refill.fth'")
 
-m4_import("`fth/skip_until.fth'")
 m4_import("`fth/whitespace.fth'")
-m4_import("`fth/parse_name.fth'")
+m4_import("`fth/scan.fth'")
+m4_import("`fth/parse.fth'")
 
 m4_import("`fth/compare_n.fth'")
 m4_import("`fth/compare.fth'")
@@ -508,7 +508,10 @@ m4_import("`fth/resolve.fth'")
 m4_import("`fth/if.fth'")
 m4_import("`fth/begin.fth'")
 
-m4_import("`fth/comment.fth'")
+m4_import("`fth/char.fth'")
+m4_import("`fth/bracket_char.fth'")
+
+m4_import("`fth/comments.fth'"))
 
 	/* Executable entry */
 
