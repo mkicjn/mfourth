@@ -25,6 +25,9 @@ m4_define("`m4_remform'","`m4_patsubst("`$@'","`[
 m4_define("`m4_forth2m4'","`m4_dosubsts(m4_unparen(m4_remform("`$@'")),m4_substlist)'")
 m4_define("`m4_forth2c'","`m4_expand(m4_forth2m4($@))'")
 m4_define("`m4_import'","`m4_forth2c((m4_include("`$1'")))'")
+m4_define("`m4_getsubsts'","`m4_unparen(m4_patsubst(m4_remform((m4_include($1))),
+"`: +\([^ ]+\) +( +\([^ )]+\) +) [^;]*;'",
+"`"`m4_addsubst("` \1 '","`docol_code,LIT(\2_defn.xt),'")'"'"))'")
 
 m4_addsubst("`: +\([^ ]+\) +( +\([^ )]+\) +) '","`m4_nonprim("`\1'",\2,('")
 m4_addsubst("` ; +IMMEDIATE'","`exit_code),m4_hibit)'")
