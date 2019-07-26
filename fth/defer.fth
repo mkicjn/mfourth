@@ -1,11 +1,9 @@
 : DEFER ( defer ) ( "name" -- )
-	PARSE-NAME MAKE-HEADER
-	DOLIT DOCOL , ['] ABORT ,
-	['] EXIT COMPILE,
+	<BUILDS ['] ABORT , DOES> @ EXECUTE
 ;
 : DEFER! ( defer_store ) ( xt1 xt2 -- )
-	CELL+ !
+	>BODY !
 ;
 : DEFER@ ( defer_fetch ) ( xt1 -- xt2 )
-	CELL+ @
+	>BODY @
 ;

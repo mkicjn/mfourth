@@ -127,16 +127,13 @@ m4_define("`m4_2op'","`{
 }'")
 
 m4_define("`m4_allot'","`m4_ifelse(m4_eval($1>1),"`0'","`LIT(0)'","`LIT(0),m4_allot(m4_eval($1-1))'")'")
-m4_define("`m4_create'","`m4_dnl
-m4_nonprim("`$1'","`$2'",(PUSH(&$2_defn.xt[5]),branch_code,LIT(sizeof(cell_t)),exit_code,m4_shift(m4_shift($*))))
-m4_addsubst("` $1 '","`docol_code,LIT($2_defn.xt),'")m4_dnl
-#define $2_ptr (&$2_defn.xt[5])
+m4_define("`m4_builds'","`m4_dnl
+m4_nonprim("`$1'","`$2'",(PUSH(&$2_defn.xt[4]),go_to_code,$3,m4_shift(m4_shift(m4_shift($*)))))
+m4_addsubst("` $1 '","`docol_code,LIT(&$2_defn.xt),'")
+#define $2_ptr (&$2_defn.xt[4])
 '")
+m4_define("`m4_create'","`m4_builds("`$1'",$2,LIT(&create_defn.xt[4]),m4_shift(m4_shift($*)))'")
 m4_define("`m4_variable'","`m4_create("`$1'",$2,LIT($3))'")
-m4_define("`m4_constant'","`m4_dnl
-m4_nonprim("`$1'","`$2'",(PUSH($3),exit_code))
-m4_addsubst("` $1 '","`docol_code,LIT($2_defn.xt),'")m4_dnl
-#define $2_ptr (&$2_defn.xt[1])
-'")
+m4_define("`m4_constant'","`m4_builds("`$1'",$2,LIT(&constant_defn.xt[6]),LIT($3))'")
 
 m4_divert(0)m4_dnl

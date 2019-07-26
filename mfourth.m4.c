@@ -104,6 +104,10 @@ m4_prim("`0BRANCH'",zbranch)
 		ip++;
 	next(ip,sp,rp);
 }
+m4_prim("`GO-TO'",go_to)
+{
+	next(*(cell_t **)ip,sp,rp);
+}
 m4_prim("`EXECUTE'",execute)
 {
 	push(rp,ip);

@@ -1,0 +1,6 @@
+: <BUILDS ( builds ) ( "name" -- )
+	PARSE-NAME MAKE-HEADER
+	HERE >BODY ( POSTPONE ) LITERAL
+	DOLIT GO-TO ,
+	CELL ALLOT
+;
