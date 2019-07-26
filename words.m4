@@ -42,11 +42,7 @@ m4_import("`fth/compile.fth'")
 m4_import("`fth/literal.fth'")
 
 /* Forward declarations to resolve a circular dependency */
-/* TODO: Is there a better way to do this? */
 m4_addsubst("` ABORT '","`docol_code,LIT(&abort_defn.xt),'")
-typedef struct { link_t link; prim_t xt[6]; } abort_t;
-abort_t abort_defn;
-/* ^ typedef to prevent double declaration as other type */
 
 m4_import("`fth/handle_xt.fth'")
 m4_import("`fth/handle_n.fth'")
@@ -55,14 +51,8 @@ m4_import("`fth/interpret.fth'")
 
 m4_import("`fth/evaluate.fth'")
 m4_import("`fth/quit.fth'")
-
-/*"`m4_import("`fth/abort.fth'")'"*/
-abort_t abort_defn = {
-	{&quit_defn.link,"ABORT",5},
-	{docol_code,(prim_t)(cell_t)&s_naught_defn.xt,spstore_code,docol_code,(prim_t)(cell_t)&quit_defn.xt,exit_code}
-};
-m4_define("`m4_last'","`&abort_defn.link'")
-/* ^ Manually set m4_last to ABORT's dictionary link */
+m4_import("`fth/clear.fth'")
+m4_import("`fth/abort.fth'")
 
 m4_import("`fth/get_current.fth'")
 m4_import("`fth/immediate.fth'")

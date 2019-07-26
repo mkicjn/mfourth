@@ -2,9 +2,9 @@
 	DEPTH >R
 	<# 62 HOLD R@ 0 #S 60 HOLD #>
 	TYPE SPACE
-	1
+	0
 	BEGIN
-		DUP R@ <=
+		DUP R@ <
 	WHILE
 		S0 OVER CELLS + @ .
 		1+

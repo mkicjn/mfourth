@@ -71,13 +71,15 @@ void $2_code(cell_t *ip,cell_t *sp,cell_t *rp)m4_dnl
 m4_define("`m4_last'","`(void *)0'")
 m4_define("`m4_hibit'","`((ucell_t)1<<((sizeof(cell_t)*8)-1))'")
 m4_define("`m4_nonprim'","`m4_dnl
-struct {
-	link_t link;
-	prim_t xt[m4_eval(m4_npcount($3))];
-} $2_defn = {
+m4_divert(0)m4_dnl
+typedef struct { link_t link; prim_t xt[m4_eval(m4_npcount($3))]; } $2_t;
+$2_t $2_defn;
+m4_divert(1)m4_dnl
+$2_t $2_defn = {
 	{m4_last,"m4_cstresc("`$1'")",m4_len("`$1'")m4_ifelse("`$4'",,,"`|$4'")},
 	{m4_unparen($3)}
-};m4_dnl
+};
+m4_divert(0)m4_dnl
 m4_define("`m4_last'","`&$2_defn.link'")m4_dnl
 m4_addsubst("` $1 '","`docol_code,LIT(&$2_defn.xt),'")m4_dnl
 '")

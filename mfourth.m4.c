@@ -378,7 +378,7 @@ m4_prim("`CELLS'",cells)
 
 	/* Executable entry */
 
-m4_constant("`CELL'",cell,sizeof(cell_t))
+m4_constant("`CELL'",cell_const,sizeof(cell_t))
 m4_constant("`S0'",s_naught,stack)
 m4_constant("`R0'",r_naught,rstack)
 m4_constant("`D0'",d_naught,uarea)
@@ -408,6 +408,6 @@ void _start(void)
 	*forth_wordlist_ptr=LIT(m4_last);
 	*context_ptr=(prim_t)forth_wordlist_ptr;
 	/* ^ TODO: Is there a better place to accomplish these? */
-	next((cell_t *)&quit_defn.xt,stack,rstack);
+	next((cell_t *)&quit_defn.xt,stack-1,rstack-1);
 }
 m4_include(.edit_warning)m4_dnl
