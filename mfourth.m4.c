@@ -383,7 +383,8 @@ m4_include("`nonprims.m4'")
 void _start(void)
 {
 	*forth_wordlist_ptr=LIT(m4_last);
-	/* ^ TODO: Is there a better place to accomplish this? */
+	*context_ptr=(prim_t)forth_wordlist_ptr;
+	/* ^ TODO: Is there a better place to accomplish these? */
 	next((cell_t *)&quit_defn.xt,stack,rstack);
 }
 m4_include(.edit_warning)m4_dnl
