@@ -378,7 +378,30 @@ m4_prim("`CELLS'",cells)
 
 	/* Executable entry */
 
-m4_include("`nonprims.m4'")
+m4_constant("`CELL'",cell,sizeof(cell_t))
+m4_constant("`S0'",s_naught,stack)
+m4_constant("`R0'",r_naught,rstack)
+m4_constant("`D0'",d_naught,uarea)
+m4_constant("`D1'",d_one,&uarea[USER_AREA_SIZE])
+m4_variable("`DP'",dp,uarea)
+m4_constant("`BL'",bl,32)
+m4_constant("`TIB'",tib,tib)
+m4_constant("`/TIB'",per_tib,TIB_SIZE)
+m4_variable("`SOURCE&'",source_addr,tib)
+m4_variable("`SOURCE#'",source_len,0)
+m4_variable("`>IN'",in,0)
+m4_variable("`BASE'",base,10)
+m4_constant("`PRECEDENCE'",precedence,m4_hibit)
+m4_variable("`FORTH-WORDLIST'",forth_wordlist,0)
+	/* ^ Initialized in _start */
+m4_create("`CONTEXT'",context,m4_allot(16))
+	/* ^ Initialized in _start */
+m4_constant("`WORDLISTS'",wordlists,16)
+m4_variable("`#ORDER'",n_order,1)
+m4_variable("`STATE'",state,0)
+m4_variable("`HOLD&'",hold_addr,0)
+
+m4_include("`words.m4'")
 
 void _start(void)
 {
