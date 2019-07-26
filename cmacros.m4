@@ -25,9 +25,10 @@ m4_define("`m4_remform'","`m4_patsubst("`$@'","`[
 m4_define("`m4_forth2m4'","`m4_dosubsts(m4_unparen(m4_remform("`$@'")),m4_substlist)'")
 m4_define("`m4_forth2c'","`m4_expand(m4_forth2m4($@))'")
 m4_define("`m4_import'","`m4_forth2c((m4_include("`$1'")))'")
+
 m4_define("`m4_getsubsts'","`m4_unparen(m4_patsubst(m4_remform((m4_include($1))),
-"`: +\([^ ]+\) +( +\([^ )]+\) +) [^;]*;'",
-"`"`m4_addsubst("` \1 '","`docol_code,LIT(\2_defn.xt),'")'"'"))'")
+	"`: +\([^ ]+\) +( +\([^ )]+\) +) [^;]*;[^:)]*'",
+	"`"`m4_addsubst("` \1 '","`docol_code,LIT(\2_defn.xt),'")'"'"))'")
 
 m4_addsubst("`: +\([^ ]+\) +( +\([^ )]+\) +) '","`m4_nonprim("`\1'",\2,('")
 m4_addsubst("` ; +IMMEDIATE'","`exit_code),m4_hibit)'")
@@ -48,9 +49,9 @@ m4_addsubst("` REPEAT '","`)),'")
 m4_addsubst("` UNTIL '","`),UNTIL),'")
 m4_addsubst("` AGAIN '","`),AGAIN),'")
 
-m4_define("`m4_escquants'","`m4_patsubst("`$1'","`[+*\\\[?]'","`\\\&'")'")
+m4_define("`m4_escquants'","`m4_patsubst("`$1'","`[.+*\\\[?]'","`\\\&'")'")
 m4_define("`m4_addsubst'","`m4_define("`m4_substlist'",m4_quote(m4_substlist,m4_unparen(m4_escquants(("`$1'"))),"`$2'"))'")
-	^ Make addsubst safe for names containing regexp quantifiers
+	^ Make addsubst safe for names containing regexp characters
 
 ################################################################################
 
@@ -84,7 +85,6 @@ $2_t $2_defn = {
 };
 m4_divert(0)m4_dnl
 m4_define("`m4_last'","`&$2_defn.link'")m4_dnl
-m4_addsubst("` $1 '","`docol_code,LIT(&$2_defn.xt),'")m4_dnl
 '")
 m4_define("`LIT'","`(prim_t)(cell_t)($1)'")
 m4_define("`PUSH'","`dolit_code,LIT($1)'")
@@ -129,11 +129,13 @@ m4_define("`m4_2op'","`{
 m4_define("`m4_allot'","`m4_ifelse(m4_eval($1>1),"`0'","`LIT(0)'","`LIT(0),m4_allot(m4_eval($1-1))'")'")
 m4_define("`m4_create'","`m4_dnl
 m4_nonprim("`$1'","`$2'",(PUSH(&$2_defn.xt[5]),branch_code,LIT(sizeof(cell_t)),exit_code,m4_shift(m4_shift($*))))
+m4_addsubst("` $1 '","`docol_code,LIT($2_defn.xt),'")m4_dnl
 #define $2_ptr (&$2_defn.xt[5])
 '")
 m4_define("`m4_variable'","`m4_create("`$1'",$2,LIT($3))'")
 m4_define("`m4_constant'","`m4_dnl
 m4_nonprim("`$1'","`$2'",(PUSH($3),exit_code))
+m4_addsubst("` $1 '","`docol_code,LIT($2_defn.xt),'")m4_dnl
 #define $2_ptr (&$2_defn.xt[1])
 '")
 

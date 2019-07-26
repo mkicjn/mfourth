@@ -1,5 +1,4 @@
 m4_include(cmacros.m4)m4_dnl
-m4_include(.edit_warning)m4_dnl
 #include "3lib.h"
 
 	/* Data types */
@@ -402,6 +401,7 @@ m4_variable("`STATE'",state,0)
 m4_variable("`HOLD&'",hold_addr,0)
 
 m4_include("`words.m4'")
+m4_undivert()
 
 void _start(void)
 {
@@ -410,4 +410,3 @@ void _start(void)
 	/* ^ TODO: Is there a better place to accomplish these? */
 	next((cell_t *)&quit_defn.xt,stack-1,rstack-1);
 }
-m4_include(.edit_warning)m4_dnl
