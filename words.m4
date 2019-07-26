@@ -33,8 +33,6 @@ m4_import("`fth/is_number.fth'")
 
 m4_import("`fth/link_to.fth'")
 m4_import("`fth/search_wordlist.fth'")
-
-	/* ^ Initialized in _start */
 m4_import("`fth/find_name.fth'")
 
 m4_import("`fth/brackets.fth'")
