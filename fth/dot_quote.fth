@@ -1,6 +1,7 @@
 : ." ( dot_quote )
-	( POSTPONE ) S"
+	34 PARSE
 	STATE @ IF
+		( POSTPONE ) SLITERAL
 		['] TYPE COMPILE,
 	ELSE
 		TYPE
