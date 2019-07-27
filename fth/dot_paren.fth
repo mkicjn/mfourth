@@ -1,0 +1,10 @@
+: .( ( dot_paren )
+	41 PARSE
+	STATE @ IF
+		( POSTPONE ) SLITERAL
+		['] TYPE COMPILE,
+	ELSE
+		TYPE
+	THEN
+; IMMEDIATE
+/*)*/

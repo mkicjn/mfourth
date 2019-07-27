@@ -5,4 +5,5 @@
 		SPACE
 		1-
 	REPEAT
+	DROP
 ;

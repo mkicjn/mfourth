@@ -1,5 +1,5 @@
 : IS-NUMBER? ( is_number ) ( c-addr u -- n ~0 | c-addr u 0 )
-	IS-CHAR? IF 2RDROP -1 EXIT THEN
+	IS-CHAR? IF -1 EXIT THEN
 	2DUP
 	BASE @ >R >BASE BASE !
 	>SIGN >R

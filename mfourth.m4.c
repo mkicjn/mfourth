@@ -206,7 +206,15 @@ m4_prim("`XOR'",xor) m4_2op(^)
 m4_prim("`NEGATE'",negate) m4_1op(-)
 m4_prim("`INVERT'",invert) m4_1op(~)
 m4_prim("`1+'",incr) m4_1op(1+)
+m4_prim("`CHAR+'",char_plus) m4_1op(1+)
 m4_prim("`1-'",decr) m4_1op(-1+)
+m4_prim("`2*'",two_mul) m4_1op(,,<<1)
+m4_prim("`2/'",two_div) m4_1op(,,>>1)
+
+m4_prim("`CHARS'",chars)
+{
+	next(ip,sp,rp);
+}
 
 m4_prim("`/MOD'",divmod)
 {
@@ -214,6 +222,13 @@ m4_prim("`/MOD'",divmod)
 	sp[-1]=a%b;
 	sp[0]=a/b;
 	next(ip,sp,rp);
+}
+
+m4_prim("`*/'",muldiv)
+{
+	register cell_t a=sp[-2],b=sp[-1],c=sp[0];
+	sp[-2]=(a*b)/c;
+	next(ip,sp-2,rp);
 }
 
 m4_prim("`ABS'",abs)
@@ -346,6 +361,13 @@ m4_prim("`@'",fetch)
 	sp[0]=*(cell_t *)sp[0];
 	next(ip,sp,rp);
 }
+m4_prim("`2@'",two_fetch)
+{
+	cell_t *addr=(cell_t *)sp[0];
+	sp[0]=addr[1];
+	sp[1]=addr[0];
+	next(ip,sp+1,rp);
+}
 m4_prim("`!'",store)
 {
 	*(cell_t *)sp[0]=sp[-1];
@@ -355,6 +377,14 @@ m4_prim("`+!'",addstore)
 {
 	*(cell_t *)sp[0]+=sp[-1];
 	next(ip,sp-2,rp);
+}
+m4_prim("`2!'",two_store)
+{
+	cell_t *addr=(cell_t *)sp[0];
+	cell_t x1=sp[-2],x2=sp[-1];
+	addr[0]=x2;
+	addr[1]=x1;
+	next(ip,sp-3,rp);
 }
 
 m4_prim("`C@'",charfetch)
@@ -381,6 +411,8 @@ m4_prim("`CELLS'",cells)
 
 	/* Executable entry */
 
+m4_constant("`TRUE'",true,~0)
+m4_constant("`FALSE'",false,0)
 m4_constant("`CELL'",cell_const,sizeof(cell_t))
 m4_constant("`S0'",s_naught,stack)
 m4_constant("`R0'",r_naught,rstack)

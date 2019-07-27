@@ -1,3 +1,3 @@
-: CONSTANT ( constant ) ( x -- )
+: CONSTANT ( constant ) ( x "name" -- )
 	<BUILDS , DOES> @
 ;
