@@ -27,7 +27,7 @@ typedef struct link_s {
 	cell_t len;
 } link_t;
 
-typedef void (*prim_t)(cell_t *,cell_t *,cell_t *);
+typedef void (*prim_t)(cell_t *,cell_t *,cell_t *,cell_t *);
 
 	/* Static memory allocations */
 
@@ -43,16 +43,11 @@ char tib[TIB_SIZE];
 
 #define push(s,v) (*(++s)=(cell_t)(v))
 #define pop(s) (*(s--))
-/* s[0] is TOS, s[+n] is above stack, s[-n] is nth item */
+/* s[0] is TOS, s[>0] is above stack, s[-n] is nth item */
 
 void next(cell_t *ip,cell_t *sp,cell_t *rp)
 {
 	(*(prim_t *)ip)(ip+1,sp,rp);
-}
-
-void breakpoint(cell_t *ip,cell_t *sp,cell_t *rp)
-{
-	next(ip,sp,rp);
 }
 
 m4_prim("`EXIT'",exit)
