@@ -27,7 +27,7 @@ typedef struct link_s {
 	cell_t len;
 } link_t;
 
-typedef void (*prim_t)(cell_t *,cell_t *,cell_t *,cell_t *);
+typedef void (*prim_t)(cell_t *,cell_t *,cell_t *);
 
 	/* Static memory allocations */
 
