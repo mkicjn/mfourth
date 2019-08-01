@@ -22,7 +22,7 @@
 	R> + >R
 	2R@ ROT EXECUTE
 	SWAP >R
-; IMMEDIATE
+;
 : +LOOP ( plus_loop )
 	['] +ITERATE COMPILE,
 	['] 0BRANCH COMPILE,
