@@ -42,3 +42,7 @@
 : J' ( j_prime ) ( -- n )
 	RP@ 4 CELLS - @
 ;
+
+: UNLOOP ( unloop ) ( R: i i' -- )
+	2RDROP
+;
