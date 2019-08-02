@@ -432,7 +432,7 @@ m4_variable("`STATE'",state,0)
 m4_variable("`HOLD&'",hold_addr,0)
 
 m4_include("`words.m4'")
-m4_undivert()
+m4_undivert(1)
 
 void _start(void)
 {
