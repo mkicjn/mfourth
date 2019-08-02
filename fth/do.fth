@@ -1,6 +1,6 @@
 : DO ( do )
 	['] 2>R COMPILE,
-	<MARK
+	MARK<
 ; IMMEDIATE
 
 : ITERATE ( iterate ) ( n -- flag ) ( R: i' i -- i' i+1 )

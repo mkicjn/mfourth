@@ -1,8 +1,8 @@
-: MARK> ( mark_r )
+: MARK> ( mark_fw )
 	( set up to branch forward from HERE )
 	HERE CELL ALLOT
 ;
-: <MARK ( l_mark )
+: MARK< ( mark_bw )
 	( set up to branch backward to HERE )
 	HERE
 ;
