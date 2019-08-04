@@ -1,5 +1,7 @@
 m4_include(cmacros.m4)m4_dnl
-#include "3lib.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 	/* Data types */
 
@@ -66,21 +68,36 @@ m4_prim("`DOLIT'",dolit)
 	next(ip+1,sp,rp);
 }
 
-	/* 3lib bindings */
+	/* stdlib bindings */
 
 m4_prim("`BYE'",bye)
 {
 	(void)ip; (void)sp; (void)rp;
-	bye();
+	exit(0);
 }
 m4_prim("`KEY'",key)
 {
-	push(sp,rx());
+	push(sp,getchar());
 	next(ip,sp,rp);
 }
 m4_prim("`EMIT'",emit)
 {
-	tx((char)pop(sp));
+	putchar(pop(sp));
+	next(ip,sp,rp);
+}
+m4_prim("`SEED'",seed)
+{
+	srand(pop(sp));
+	next(ip,sp,rp);
+}
+m4_prim("`TIME'",time)
+{
+	push(sp,time(NULL));
+	next(ip,sp,rp);
+}
+m4_prim("`RAND'",rand)
+{
+	push(sp,rand());
 	next(ip,sp,rp);
 }
 

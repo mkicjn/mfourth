@@ -1,15 +1,7 @@
 CC=clang
 CFLAGS=-ansi -O3 -g -nostartfiles -Wall -Wextra -Wpedantic
 
-ASM=nasm
-ASMFLAGS=-felf64
-
-PLATFORM=linux_x64
-
-a.out: base.o 3lib.o
-	ld $^
-
-posix: base.c posix.c
+a.out: base.c
 	$(CC) $(CFLAGS) $^
 
 words.m4: fth/*.fth
@@ -20,9 +12,6 @@ base.c: mfourth.m4.c cmacros.m4 words.m4 fth/*.fth
 
 base.o: base.c 3lib.h
 	$(CC) -c $(CFLAGS) $< -o $@
-
-3lib.o: $(PLATFORM).asm
-	$(ASM) $(ASMFLAGS) $< -o $@
 
 .PHONY: clean
 # Deletes all machine-generated intermediate files.
