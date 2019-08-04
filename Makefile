@@ -1,5 +1,5 @@
 CC=clang
-CFLAGS=-ansi -O3 -g -nostartfiles -Wall -Wextra -Wpedantic
+CFLAGS=-ansi -O3 -g -Wall -Wextra -Wpedantic
 
 a.out: base.c
 	$(CC) $(CFLAGS) $^

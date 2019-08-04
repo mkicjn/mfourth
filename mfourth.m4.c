@@ -451,10 +451,11 @@ m4_variable("`HOLD&'",hold_addr,0)
 m4_include("`words.m4'")
 m4_undivert(1)
 
-void _start(void)
+int main(int argc,char **argv)
 {
+	(void) argc; (void) argv;
 	*forth_wordlist_ptr=LIT(m4_last);
 	*context_ptr=(prim_t)forth_wordlist_ptr;
-	/* ^ TODO: Is there a better place to accomplish these? */
 	next((cell_t *)&quit_defn.xt,stack-1,rstack-1);
+	return 0;
 }
