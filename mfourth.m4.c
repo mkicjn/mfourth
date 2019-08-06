@@ -179,6 +179,13 @@ m4_prim("`-ROT'",unrot)
 	swap(cell_t,sp[-1],sp[-2]);
 	next(ip,sp,rp);
 }
+m4_prim("`?DUP'",qdup)
+{
+	cell_t a=sp[0];
+	if (a)
+		*(++sp)=a;
+	next(ip,sp,rp);
+}
 
 	/* Return stack manipulation */
 
@@ -447,6 +454,7 @@ m4_constant("`WORDLISTS'",wordlists,16)
 m4_variable("`#ORDER'",n_order,1)
 m4_variable("`STATE'",state,0)
 m4_variable("`HOLD&'",hold_addr,0)
+m4_variable("`HANDLER'",handler,0)
 
 m4_include("`words.m4'")
 m4_undivert(1)
