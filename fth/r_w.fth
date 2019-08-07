@@ -1,3 +1,3 @@
 : R/W ( r_w )
-	R/O W/O AND
+	R/O W/O OR
 ;

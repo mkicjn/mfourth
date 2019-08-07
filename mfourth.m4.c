@@ -135,16 +135,25 @@ m4_prim("`WRITE-FILE'",write_file)
 m4_prim("`READ-FILE'",read_file)
 {
 	errno=0;
-	fread((char *)sp[-2],sizeof(char),sp[-1],(FILE *)sp[0]);
-	sp[-2]=errno;
-	next(ip,sp-2,rp);
+	sp[-2]=fread((char *)sp[-2],sizeof(char),sp[-1],(FILE *)sp[0]);
+	sp[-1]=errno;
+	next(ip,sp-1,rp);
+}
+size_t line(char *buf,size_t len,FILE *f)
+{ /* shout out to the IOCCC :) */
+	char c;
+	size_t i=0;
+	while (len-->0&&(c=(*(buf++)=fgetc(f)),c!='\n'&&c!='\0'))
+		i++;
+	return i;
 }
 m4_prim("`READ-LINE'",read_line)
 {
-	errno=0;
-	fgets((char *)sp[-2],sp[-1],(FILE *)sp[0]);
-	sp[-2]=errno;
-	next(ip,sp-2,rp);
+	char *str=(char *)sp[-2];
+	sp[-2]=line(str,sp[-1],(FILE *)sp[0]);
+	sp[-1]=-(str[0]!=EOF);
+	sp[0]=0;
+	next(ip,sp,rp);
 }
 
 	/* Branching */

@@ -1,3 +1,3 @@
 : TYPE ( type ) ( c-addr u -- )
-	STDOUT WRITE-FILE
+	STDOUT WRITE-FILE DROP
 ;
