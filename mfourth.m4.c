@@ -128,14 +128,14 @@ m4_prim("`STDOUT'",stdout)
 m4_prim("`WRITE-FILE'",write_file)
 {
 	errno=0;
-	fwrite((char *)sp[-2],sizeof(char),sp[-1],(FILE *)sp[0]);
+	fwrite((char *)sp[-2],1,sp[-1],(FILE *)sp[0]);
 	sp[-2]=errno;
 	next(ip,sp-2,rp);
 }
 m4_prim("`READ-FILE'",read_file)
 {
 	errno=0;
-	sp[-2]=fread((char *)sp[-2],sizeof(char),sp[-1],(FILE *)sp[0]);
+	sp[-2]=fread((char *)sp[-2],1,sp[-1],(FILE *)sp[0]);
 	sp[-1]=errno;
 	next(ip,sp-1,rp);
 }
@@ -152,7 +152,7 @@ m4_prim("`READ-LINE'",read_line)
 	char *str=(char *)sp[-2];
 	sp[-2]=line(str,sp[-1],(FILE *)sp[0]);
 	sp[-1]=-(str[0]!=EOF);
-	sp[0]=0;
+	sp[0]=0; /* man fgetc does not mention errno */
 	next(ip,sp,rp);
 }
 
@@ -516,7 +516,7 @@ m4_constant("`W/O'",w_o,1)
 m4_include("`words.m4'")
 m4_undivert(1)
 
-int main(int argc,char **argv)
+int main(int argc,char *argv[])
 {
 	(void) argc; (void) argv;
 	*forth_wordlist_ptr=LIT(m4_last);

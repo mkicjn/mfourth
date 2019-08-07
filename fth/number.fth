@@ -10,7 +10,7 @@
 	THEN
 	HOLD
 ;
-: #> ( number_gt ) ( -- c-addr u )
+: #> ( number_gt ) ( xd -- c-addr u )
 	2DROP
 	HOLD& @
 	PAD OVER -
