@@ -155,6 +155,37 @@ m4_prim("`READ-LINE'",read_line)
 	sp[0]=0; /* man fgetc does not mention errno */
 	next(ip,sp,rp);
 }
+m4_prim("`FILE-POSITION'",file_position)
+{
+	errno=0;
+	sp[0]=ftell((FILE *)sp[0]);
+	sp[1]=0;
+	sp[2]=errno;
+	next(ip,sp+2,rp);
+}
+long fsize(FILE *f)
+{
+	long s=0,p=ftell(f);
+	fseek(f,0,SEEK_END);
+	s=ftell(f);
+	fseek(f,p,SEEK_SET);
+	return s;
+}
+m4_prim("`FILE-SIZE'",file_size)
+{
+	errno=0;
+	sp[0]=fsize((FILE *)sp[0]);
+	sp[1]=0;
+	sp[2]=errno;
+	next(ip,sp+2,rp);
+}
+m4_prim("`REMOVE'",remove)
+{
+	errno=0;
+	remove((char *)sp[0]);
+	sp[0]=errno;
+	next(ip,sp,rp);
+}
 
 	/* Branching */
 
