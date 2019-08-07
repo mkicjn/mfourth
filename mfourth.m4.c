@@ -163,6 +163,13 @@ m4_prim("`FILE-POSITION'",file_position)
 	sp[2]=errno;
 	next(ip,sp+2,rp);
 }
+m4_prim("`REPOSITION-FILE'",reposition_file)
+{
+	errno=0;
+	fseek((FILE *)sp[0],sp[-2],SEEK_SET);
+	sp[-2]=errno;
+	next(ip,sp-2,rp);
+}
 long fsize(FILE *f)
 {
 	long s=0,p=ftell(f);
