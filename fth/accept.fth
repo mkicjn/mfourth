@@ -1,4 +1,5 @@
 : ACCEPT ( accept ) ( c-addr max -- n )
+	( should STDIN READ-LINE replace this? )
 	>R 0
 	BEGIN
 		DUP R@ >= IF

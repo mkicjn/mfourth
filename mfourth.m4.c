@@ -2,6 +2,7 @@ m4_include(cmacros.m4)m4_dnl
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <errno.h>
 
 	/* Data types */
 
@@ -99,6 +100,51 @@ m4_prim("`RAND'",rand)
 {
 	push(sp,rand());
 	next(ip,sp,rp);
+}
+m4_prim("`FOPEN'",fopen)
+{ /* ( c-addr c-addr -- fileid ior ) */
+	errno=0;
+	sp[-1]=(cell_t)fopen((char *)sp[-1],(char *)sp[0]);
+	sp[0]=errno;
+	next(ip,sp,rp);
+}
+m4_prim("`CLOSE-FILE'",fclose)
+{ /* Would be called FCLOSE for consistency but satisfies CLOSE-FILE's stack effect */
+	errno=0;
+	fclose((FILE *)sp[0]);
+	sp[0]=errno;
+	next(ip,sp,rp);
+}
+m4_prim("`STDIN'",stdin)
+{
+	push(sp,stdin);
+	next(ip,sp,rp);
+}
+m4_prim("`STDOUT'",stdout)
+{
+	push(sp,stdout);
+	next(ip,sp,rp);
+}
+m4_prim("`WRITE-FILE'",write_file)
+{
+	errno=0;
+	fwrite((char *)sp[-2],sizeof(char),sp[-1],(FILE *)sp[0]);
+	sp[-2]=errno;
+	next(ip,sp-2,rp);
+}
+m4_prim("`READ-FILE'",read_file)
+{
+	errno=0;
+	fread((char *)sp[-2],sizeof(char),sp[-1],(FILE *)sp[0]);
+	sp[-2]=errno;
+	next(ip,sp-2,rp);
+}
+m4_prim("`READ-LINE'",read_line)
+{
+	errno=0;
+	fgets((char *)sp[-2],sp[-1],(FILE *)sp[0]);
+	sp[-2]=errno;
+	next(ip,sp-2,rp);
 }
 
 	/* Branching */
@@ -455,6 +501,8 @@ m4_variable("`#ORDER'",n_order,1)
 m4_variable("`STATE'",state,0)
 m4_variable("`HOLD&'",hold_addr,0)
 m4_variable("`HANDLER'",handler,0)
+m4_constant("`R/O'",r_o,2)
+m4_constant("`W/O'",w_o,1)
 
 m4_include("`words.m4'")
 m4_undivert(1)
