@@ -1,9 +1,12 @@
 : QUIT ( quit ) ( R: i*x -- )
 	R0 RP!
-	TIB SOURCE& !
+	TIB >SOURCE !
 	BEGIN
 		REFILL IF
-			INTERPRET
+			['] INTERPRET CATCH ?DUP IF
+				( TODO print error )
+				ABORT
+			THEN
 		ELSE
 			BYE
 		THEN

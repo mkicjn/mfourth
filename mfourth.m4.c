@@ -41,6 +41,8 @@ cell_t rstack[STACK_SIZE];
 cell_t uarea[USER_AREA_SIZE];
 #define TIB_SIZE (1<<10)
 char tib[TIB_SIZE];
+#define PAD_SIZE (1<<10)
+char pad[PAD_SIZE];
 
 	/* Kernel structure */
 
@@ -149,9 +151,9 @@ size_t line(char *buf,size_t len,FILE *f)
 }
 m4_prim("`READ-LINE'",read_line)
 {
-	char *str=(char *)sp[-2];
-	sp[-2]=line(str,sp[-1],(FILE *)sp[0]);
-	sp[-1]=-(str[0]!=EOF);
+	char *buf=(char *)sp[-2];
+	sp[-2]=line(buf,sp[-1],(FILE *)sp[0]);
+	sp[-1]=-(buf[0]!=EOF);
 	sp[0]=0; /* man fgetc does not mention errno */
 	next(ip,sp,rp);
 }
@@ -534,7 +536,11 @@ m4_variable("`DP'",dp,uarea)
 m4_constant("`BL'",bl,32)
 m4_constant("`TIB'",tib,tib)
 m4_constant("`/TIB'",per_tib,TIB_SIZE)
-m4_variable("`SOURCE&'",source_addr,tib)
+m4_constant("`PAD'",pad,pad)
+m4_constant("`/PAD'",per_pad,PAD_SIZE)
+m4_constant("`PAD<'",pad_end,&pad[PAD_SIZE])
+m4_variable("`>HOLD'",to_hold,0)
+m4_variable("`>SOURCE'",to_source,tib)
 m4_variable("`SOURCE#'",source_len,0)
 m4_variable("`>IN'",in,0)
 m4_variable("`BASE'",base,10)
@@ -546,7 +552,6 @@ m4_create("`CONTEXT'",context,m4_allot(16))
 m4_constant("`WORDLISTS'",wordlists,16)
 m4_variable("`#ORDER'",n_order,1)
 m4_variable("`STATE'",state,0)
-m4_variable("`HOLD&'",hold_addr,0)
 m4_variable("`HANDLER'",handler,0)
 m4_constant("`R/O'",r_o,2)
 m4_constant("`W/O'",w_o,1)

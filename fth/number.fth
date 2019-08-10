@@ -1,5 +1,5 @@
 : <# ( lt_number ) ( -- )
-	PAD HOLD& !
+	PAD< >HOLD !
 ;
 : # ( number ) ( ud1 -- ud2 )
 	BASE @ UD/MOD ROT
@@ -12,6 +12,6 @@
 ;
 : #> ( number_gt ) ( xd -- c-addr u )
 	2DROP
-	HOLD& @
-	PAD OVER -
+	>HOLD @
+	PAD< OVER -
 ;
