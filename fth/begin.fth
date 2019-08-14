@@ -1,5 +1,5 @@
 : BEGIN ( begin )
-	HERE
+	MARK<
 ; IMMEDIATE
 : AGAIN ( again )
 	DOLIT BRANCH ,
