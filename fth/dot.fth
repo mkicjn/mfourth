@@ -1,6 +1,6 @@
 : . ( dot ) ( n -- )
 	DUP >R ABS
-	0 <# #S R> SIGN #>
+	S>D <# #S R> SIGN #>
 	TYPE SPACE
 ;
 : U. ( udot ) ( u -- )
@@ -10,7 +10,7 @@
 : .R ( dotr ) ( n n -- )
 	>R
 	DUP >R ABS
-	0 <# #S R> SIGN #>
+	S>D <# #S R> SIGN #>
 	R> OVER - SPACES
 	TYPE
 ;
