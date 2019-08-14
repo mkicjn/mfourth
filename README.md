@@ -1,5 +1,5 @@
 # mfourth
-## Forth in a "fourth" of the C with m4
+## Forth in less than a "fourth" of the C with m4
 *No C functions over 5 lines!*
 
 The general idea is to implement Forth using as little (ANSI) C as possible.

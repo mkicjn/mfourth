@@ -153,7 +153,7 @@ m4_prim("`READ-LINE'",read_line)
 {
 	char *buf=(char *)sp[-2];
 	sp[-2]=line(buf,sp[-1],(FILE *)sp[0]);
-	sp[-1]=-(buf[0]!=EOF);
+	sp[-1]=-(buf[0]!=(char)EOF);
 	sp[0]=0; /* man fgetc does not mention errno */
 	next(ip,sp,rp);
 }
@@ -528,8 +528,8 @@ m4_prim("`CELLS'",cells)
 m4_constant("`TRUE'",true,~0)
 m4_constant("`FALSE'",false,0)
 m4_constant("`CELL'",cell_const,sizeof(cell_t))
-m4_constant("`S0'",s_naught,stack)
-m4_constant("`R0'",r_naught,rstack)
+m4_constant("`S0'",s_naught,stack+1)
+m4_constant("`R0'",r_naught,rstack+1)
 m4_constant("`D0'",d_naught,uarea)
 m4_constant("`D1'",d_one,&uarea[USER_AREA_SIZE])
 m4_variable("`DP'",dp,uarea)
@@ -564,7 +564,7 @@ int main(int argc,char *argv[])
 {
 	(void) argc; (void) argv;
 	*forth_wordlist_ptr=LIT(m4_last);
-	*context_ptr=(prim_t)forth_wordlist_ptr;
-	next((cell_t *)&quit_defn.xt,stack-1,rstack-1);
+	*context_ptr=(prim_t)(cell_t)forth_wordlist_ptr;
+	next((cell_t *)&quit_defn.xt,stack,rstack);
 	return 0;
 }

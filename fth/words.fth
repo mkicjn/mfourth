@@ -1,0 +1,10 @@
+: WORDS ( words ) ( -- )
+	GET-CURRENT
+	BEGIN
+		@ DUP
+	WHILE
+		DUP LINK>NAME TYPE SPACE
+	REPEAT
+	DROP
+	CR
+;

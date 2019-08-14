@@ -1,6 +1,7 @@
 : SEARCH-WORDLIST ( search_wordlist ) ( c-addr u wid -- 0 | xt +/-1 )
-	@
-	BEGIN ?DUP WHILE
+	BEGIN
+		@ DUP
+	WHILE
 		>R
 		2DUP DUP
 		R@ LINK>NAME
@@ -14,7 +15,7 @@
 		ELSE
 			2DROP 2DROP
 		THEN
-		R> @
+		R>
 	REPEAT
-	2DROP 0
+	DROP 2DROP 0
 ;
