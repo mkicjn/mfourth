@@ -8,6 +8,6 @@
 ;
 : ; ( semicolon ) ( -- )
 	['] EXIT COMPILE,
-	LATEST UNHIDE
+	LATEST REVEAL
 	( POSTPONE ) [
 ; IMMEDIATE

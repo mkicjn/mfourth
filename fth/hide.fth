@@ -3,7 +3,7 @@
 	DUP @ HIDDENNESS OR
 	SWAP !
 ;
-: UNHIDE ( unhide ) ( xt -- )
+: REVEAL ( reveal ) ( xt -- )
 	CELL -
 	DUP @ HIDDENNESS INVERT AND
 	SWAP !
