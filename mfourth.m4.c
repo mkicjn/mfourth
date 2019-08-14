@@ -134,6 +134,13 @@ m4_prim("`WRITE-FILE'",write_file)
 	sp[-2]=errno;
 	next(ip,sp-2,rp);
 }
+m4_prim("`FLUSH-FILE'",flush_file)
+{
+	errno=0;
+	fflush((FILE *)sp[0]);
+	sp[0]=errno;
+	next(ip,sp,rp);
+}
 m4_prim("`READ-FILE'",read_file)
 {
 	errno=0;
