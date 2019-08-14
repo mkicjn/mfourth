@@ -4,7 +4,7 @@
 	BEGIN
 		REFILL IF
 			['] INTERPRET CATCH ?DUP IF
-				( TODO print error )
+				( TODO print error here )
 				ABORT
 			THEN
 		ELSE

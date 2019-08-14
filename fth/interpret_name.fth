@@ -1,10 +1,9 @@
-: INTERPRET-NAME ( interpret_name ) ( c-addr u -- i*x )
-	FIND-NAME DUP IF
+: INTERPRET-NAME ( interpret_name ) ( i*x c-addr u -- j*x )
+	FIND-NAME ?DUP IF
 		HANDLE-XT
-	ELSE DROP IS-NUMBER? IF
+	ELSE IS-NUMBER? IF
 		HANDLE-#
 	ELSE
-		TYPE 63 EMIT CR
-		ABORT
+		UNDEFINED
 	THEN THEN
 ;
