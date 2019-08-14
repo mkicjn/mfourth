@@ -1,3 +1,3 @@
 : LATEST ( latest ) ( -- xt )
-	GET-CURRENT @ LINK>XT
+	GET-CURRENT @ NAME>XT
 ;

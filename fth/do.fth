@@ -3,7 +3,7 @@
 	MARK<
 ; IMMEDIATE
 
-: ITERATE-LOOP ( iterate_loop ) ( n -- flag ) ( R: i' i -- i' i+1 )
+: ITERATE-LOOP ( iterate_loop ) ( -- flag ) ( R: i' i -- i' i+1 )
 	R>
 	R> 1+ >R
 	2R@ <=
@@ -11,9 +11,8 @@
 ;
 : ITERATE-+LOOP ( iterate_plusloop ) ( n -- flag ) ( R: i' i -- i' i+n )
 	R> SWAP
-	DUP 0> IF ['] <= ELSE ['] >= THEN SWAP
-	R> + >R
-	2R@ ROT EXECUTE
+	DUP R> + >R
+	0< IF 2R@ >= ELSE 2R@ <= THEN
 	SWAP >R
 ;
 

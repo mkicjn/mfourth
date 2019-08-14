@@ -11,20 +11,20 @@
 		1+ SWAP 1+ SWAP
 		2R> >R 1-
 	REPEAT
-	RDROP 2DROP
+	RDROP DROP 2DROP
 	0
 ;
 : COMPARISON ( comparison ) ( c-addr1 u1 c-addr2 u2 xt -- -1|0|1 )
 	>R
 	ROT SWAP 2DUP MIN ( c-addr1 c-addr2 u1 u2 min[u1,u2] ) ( R: xt )
-	R> 2SWAP 2>R ( c-addr1 c-addr2 min[u1,u2] xt ) ( R: u2 u1 )
+	R> 2SWAP 2>R ( c-addr1 c-addr2 min[u1,u2] xt ) ( R: u1 u2 )
 	COMPARE-#
-	DUP 0<> IF
-		2RDROP EXIT
+	?DUP IF
+		2RDROP
+	ELSE
+		2R> -
+		1 MIN -1 MAX
 	THEN
-	DROP
-	2R> -
-	1 MIN -1 MAX
 ;
 : NO-OP ( noop ) ;
 : CASE-SENSITIVE ( case ) ( -- xt )

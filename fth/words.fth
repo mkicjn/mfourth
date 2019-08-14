@@ -1,10 +1,7 @@
+: .NT ( dot_name ) ( nt -- )
+	NAME>STRING TYPE SPACE TRUE
+;
 : WORDS ( words ) ( -- )
-	GET-CURRENT
-	BEGIN
-		@ DUP
-	WHILE
-		DUP LINK>NAME TYPE SPACE
-	REPEAT
-	DROP
+	['] .NT GET-CURRENT TRAVERSE-WORDLIST
 	CR
 ;
