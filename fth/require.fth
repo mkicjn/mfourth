@@ -7,7 +7,8 @@
 		PAD SWAP
 		EVALUATE
 	REPEAT
-	R> CLOSE-FILE DROP
+	R> CLOSE-FILE THROW
+	DROP
 ;
 : INCLUDED ( included ) ( i*x c-addr u -- j*x )
 	R/O OPEN-FILE THROW
