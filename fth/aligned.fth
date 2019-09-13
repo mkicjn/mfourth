@@ -1,3 +1,3 @@
 : ALIGNED ( aligned ) ( c-addr -- a-addr )
-	CELL OVER CELL MOD - +
+	1- CELL / 1+ CELL *
 ;
