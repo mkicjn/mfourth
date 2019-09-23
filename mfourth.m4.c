@@ -554,9 +554,9 @@ m4_variable("`BASE'",base,10)
 m4_constant("`IMMEDIACY'",immediacy,m4_hibit)
 m4_constant("`HIDDENNESS'",hiddenness,m4_hibit>>1)
 m4_variable("`FORTH-WORDLIST'",forth_wordlist,0)
-	/* ^ Initialized in _start */
+	/* ^ Initialized in main */
 m4_create("`CONTEXT'",context,m4_allot(16))
-	/* ^ Initialized in _start */
+	/* ^ Initialized in main */
 m4_constant("`WORDLISTS'",wordlists,16)
 m4_variable("`#ORDER'",n_order,1)
 m4_variable("`STATE'",state,0)
