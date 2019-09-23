@@ -1,6 +1,7 @@
 m4_include(cmacros.m4)m4_dnl
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <errno.h>
 
@@ -564,14 +565,27 @@ m4_variable("`HANDLER'",handler,0)
 m4_constant("`R/O'",r_o,2)
 m4_constant("`W/O'",w_o,1)
 
+m4_constant("`ARGC'",argc,0)
+	/* ^ Initialized in main */
+m4_constant("`ARGV'",argv,0) /* Array of counted strings */
+	/* ^ Initialized in main */
+
 m4_include("`words.m4'")
 m4_undivert(1)
 
 int main(int argc,char *argv[])
 {
-	(void) argc; (void) argv;
+	int i;
 	*forth_wordlist_ptr=LIT(m4_last);
 	*context_ptr=(prim_t)(cell_t)forth_wordlist_ptr;
+	*argc_ptr=(prim_t)(cell_t)argc;
+	*argv_ptr=(prim_t)(cell_t)argv;
+	for (i=0;i<argc;i++) {
+		size_t l=strlen(argv[i]);
+		memmove(argv[i]+1,argv[i],l);
+		*argv[i]=l;
+	}
+
 	next((cell_t *)&quit_defn.xt,stack,rstack);
 	return 0;
 }
