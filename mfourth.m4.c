@@ -36,9 +36,7 @@ typedef void (*prim_t)(cell_t *,cell_t *,cell_t *);
 	/* Static memory allocations */
 
 #define STACK_SIZE (1<<10)
-#define USER_AREA_SIZE (1<<12)
-cell_t stack[STACK_SIZE];
-cell_t rstack[STACK_SIZE];
+#define USER_AREA_SIZE (1<<16)
 cell_t uarea[USER_AREA_SIZE];
 #define TIB_SIZE (1<<10)
 char tib[TIB_SIZE];
@@ -536,8 +534,10 @@ m4_prim("`CELLS'",cells)
 m4_constant("`TRUE'",true,~0)
 m4_constant("`FALSE'",false,0)
 m4_constant("`CELL'",cell_const,sizeof(cell_t))
-m4_constant("`S0'",s_naught,stack+1)
-m4_constant("`R0'",r_naught,rstack+1)
+m4_constant("`S0'",s_naught,NULL)
+	/* ^ Initialized in main */
+m4_constant("`R0'",r_naught,NULL)
+	/* ^ Initialized in main */
 m4_constant("`D0'",d_naught,uarea)
 m4_constant("`D1'",d_one,&uarea[USER_AREA_SIZE])
 m4_variable("`DP'",dp,uarea)
@@ -576,10 +576,16 @@ m4_undivert(1)
 int main(int argc,char *argv[])
 {
 	int i;
+	cell_t stack[STACK_SIZE];
+	cell_t rstack[STACK_SIZE];
+
+	*s_naught_ptr=LIT(stack+1);
+	*r_naught_ptr=LIT(rstack+1);
 	*forth_wordlist_ptr=LIT(m4_last);
-	*context_ptr=(prim_t)(cell_t)forth_wordlist_ptr;
-	*argc_ptr=(prim_t)(cell_t)argc;
-	*argv_ptr=(prim_t)(cell_t)argv;
+	*context_ptr=LIT(forth_wordlist_ptr);
+	*argc_ptr=LIT(argc);
+	*argv_ptr=LIT(argv);
+
 	for (i=0;i<argc;i++) {
 		size_t l=strlen(argv[i]);
 		memmove(argv[i]+1,argv[i],l);
