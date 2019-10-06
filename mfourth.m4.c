@@ -4,6 +4,8 @@ m4_include(cmacros.m4)m4_dnl
 #include <string.h>
 #include <time.h>
 #include <errno.h>
+#include <termios.h>
+#include <stdbool.h>
 
 	/* Data types */
 
@@ -77,9 +79,21 @@ m4_prim("`BYE'",bye)
 	(void)ip; (void)sp; (void)rp;
 	exit(0);
 }
+void set_raw(bool r)
+{
+	struct termios t;
+	tcgetattr(1,&t);
+	if (r)
+		t.c_lflag&=~(ICANON|ECHO);
+	else
+		t.c_lflag|=(ICANON|ECHO);
+	tcsetattr(1,TCSANOW,&t);
+}
 m4_prim("`KEY'",key)
 {
+	set_raw(true);
 	push(sp,getchar());
+	set_raw(false);
 	next(ip,sp,rp);
 }
 m4_prim("`EMIT'",emit)
