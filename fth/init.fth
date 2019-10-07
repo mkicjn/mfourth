@@ -1,0 +1,14 @@
+: !INIT ( init )
+	1 >R
+	BEGIN
+		R@ ARGC <
+	WHILE
+		ARGV R@ CELLS + @ COUNT
+		['] REQUIRED CATCH ?DUP IF
+			PRINT-ERROR
+		THEN
+		R> 1+ >R
+	REPEAT
+	RDROP
+	QUIT
+;

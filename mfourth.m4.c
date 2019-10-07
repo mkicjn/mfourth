@@ -217,8 +217,10 @@ m4_prim("`REMOVE'",remove)
 }
 m4_prim("`PRINT-ERROR'",print_error)
 {
-	puts(strerror(sp[0]));
-	next(ip,sp-1,rp);
+	cell_t e=pop(sp);
+	if (e>=0)
+		puts(strerror(e));
+	next(ip,sp,rp);
 }
 
 	/* Branching */
@@ -611,6 +613,6 @@ int main(int argc,char *argv[])
 		*argv[i]=l;
 	}
 
-	next((cell_t *)&quit_defn.xt,stack,rstack);
+	next((cell_t *)&init_defn.xt,stack,rstack);
 	return 0;
 }
