@@ -215,6 +215,11 @@ m4_prim("`REMOVE'",remove)
 	sp[0]=errno;
 	next(ip,sp,rp);
 }
+m4_prim("`PRINT-ERROR'",print_error)
+{
+	puts(strerror(sp[0]));
+	next(ip,sp-1,rp);
+}
 
 	/* Branching */
 

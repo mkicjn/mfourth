@@ -1,0 +1,18 @@
+: CSI 27 EMIT [CHAR] [ EMIT ;
+: CUP [CHAR] H EMIT ;
+: ED [CHAR] J EMIT ;
+: SGR [CHAR] m EMIT ;
+: SCP [CHAR] s EMIT ;
+: RCP [CHAR] u EMIT ;
+
+: CLS
+	CSI [CHAR] 2 EMIT ED
+	CSI CUP
+;
+: AT-XY
+	CSI
+	1- 0 .R
+	[CHAR] ; EMIT
+	1- 0 .R
+	CUP
+;

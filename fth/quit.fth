@@ -4,9 +4,10 @@
 	BEGIN
 		REFILL IF
 			['] INTERPRET CATCH ?DUP IF
-				( TODO print error here )
+				DUP 0>= IF PRINT-ERROR THEN
 				ABORT
 			THEN
+			OK
 		ELSE
 			BYE
 		THEN
