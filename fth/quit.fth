@@ -1,3 +1,5 @@
+: OK ( ok ) BL EMIT 111 EMIT 107 EMIT CR ;
+
 : QUIT ( quit ) ( R: i*x -- )
 	R0 RP!
 	TIB >SOURCE !

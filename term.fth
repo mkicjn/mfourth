@@ -5,6 +5,11 @@
 : SCP [CHAR] s EMIT ;
 : RCP [CHAR] u EMIT ;
 
+: CUU [CHAR] A EMIT ;
+: CUD [CHAR] B EMIT ;
+: CUF [CHAR] C EMIT ;
+: CUB [CHAR] D EMIT ;
+
 : CLS
 	CSI [CHAR] 2 EMIT ED
 	CSI CUP
