@@ -27,12 +27,12 @@
 	THEN
 ;
 : NO-OP ( noop ) ;
-: CASE-SENSITIVE ( case ) ( -- xt )
+: CASE-SENSITIVE ( case_sensitive ) ( -- xt )
 	['] NO-OP
 ;
 : TO-UPPER ( to_upper ) 32 INVERT AND ;
 : TO-LOWER ( to_lower ) 32 OR ;
-: CASE-INSENSITIVE ( nocase ) ( -- xt )
+: CASE-INSENSITIVE ( case_insensitive ) ( -- xt )
 	['] TO-LOWER
 ;
 : COMPARE ( compare ) ( c-addr1 u1 c-addr2 u2 -- -1|0|1 )
