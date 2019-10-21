@@ -101,6 +101,11 @@ m4_prim("`EMIT'",emit)
 	putchar(pop(sp));
 	next(ip,sp,rp);
 }
+m4_prim("`UNKEY'",unkey)
+{
+	ungetc(sp[0],stdin);
+	next(ip,sp-1,rp);
+}
 m4_prim("`SEED'",seed)
 {
 	srand(pop(sp));
