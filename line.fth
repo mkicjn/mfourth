@@ -28,11 +28,8 @@ REQUIRE term.fth
 ;
 
 : HANDLE-PRINTABLE ( str pos cnt char -- str pos+1 cnt+1 )
-	\ Print the character and save it
 	DUP EMIT >R
-	\ Reprint the rest of the string
 	REPRINT-LINE
-	\ Insert the character into string memory
 	SLIDE-RIGHT
 	R> INSERT-CHARACTER
 ;
@@ -43,6 +40,7 @@ REQUIRE term.fth
 	TUCK = IF CSI CUB THEN
 	R>
 ;
+
 : CURSOR-RIGHT ( str pos cnt -- str pos' cnt )
 	>R
 	1+ DUP R@ MIN
@@ -63,8 +61,29 @@ REQUIRE term.fth
 	REPRINT-LINE
 ;
 
+: HANDLE-HOME ( str pos cnt -- str 0 cnt )
+	>R
+	BEGIN
+		DUP 0>
+	WHILE
+		CSI CUB
+		1-
+	REPEAT
+	R>
+;
+
+: HANDLE-END ( str pos cnt -- str cnt cnt )
+	>R
+	BEGIN
+		DUP R@ <
+	WHILE
+		CSI CUF
+		1+
+	REPEAT
+	R>
+;
+
 : HANDLE-CONTROL ( str pos cnt char -- str pos cnt flag )
-	\ TODO : Add handling for delete, home, end, etc.
 	DUP 27 = IF \ Escape sequences, i.e. arrow keys
 		DROP
 		KEY DUP [CHAR] [ <> IF
@@ -74,29 +93,19 @@ REQUIRE term.fth
 			DROP
 		THEN
 		KEY CASE
-		[CHAR] 3 OF \ Delete
-			KEY DROP
-			HANDLE-DELETE
-			ENDOF
-		[CHAR] D OF \ Left arrow
-			CURSOR-LEFT
-			ENDOF
-		[CHAR] C OF \ Right arrow
-			CURSOR-RIGHT
-			ENDOF
+			[CHAR] 3 OF KEY DROP HANDLE-DELETE ENDOF
+			[CHAR] D OF CURSOR-LEFT ENDOF
+			[CHAR] C OF CURSOR-RIGHT ENDOF
+			[CHAR] H OF HANDLE-HOME ENDOF
+			[CHAR] F OF HANDLE-END ENDOF
 		ENDCASE
 		FALSE
 	ELSE
 		CASE \ General non-printable character handling
-		4 OF
-			TRUE ENDOF
-		10 OF
-			2DUP - BEGIN DUP 0< WHILE CSI CUF 1+ REPEAT
-			1- ENDOF
-		127 OF
-			OVER 0> IF HANDLE-BACKSPACE THEN
-			FALSE ENDOF
-		>R FALSE R>
+			4 OF TRUE ENDOF
+			10 OF HANDLE-END TRUE ENDOF
+			127 OF HANDLE-BACKSPACE FALSE ENDOF
+			>R FALSE R>
 		ENDCASE
 	THEN
 ;
@@ -113,12 +122,3 @@ REQUIRE term.fth
 	UNTIL ( str pos cnt ) ( R: max )
 	RDROP NIP
 ;
-
-' STRING-TAIL HIDE
-' SLIDE-RIGHT HIDE
-' SLIDE-LEFT HIDE
-' REPRINT-LINE HIDE
-' INSERT-CHARACTER HIDE
-' HANDLE-PRINTABLE HIDE
-' HANDLE-BACKSPACE HIDE
-' HANDLE-CONTROL HIDE
