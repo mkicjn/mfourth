@@ -1,22 +1,25 @@
 REQUIRE term.fth
 
-: RIGHT-STRING ( str pos cnt -- str pos cnt strr cntr )
+: STRING-TAIL ( str pos cnt -- str pos cnt strr cntr )
 	2DUP - NEGATE 2>R
 	2DUP + R> R> -ROT
 ;
 
 : SLIDE-RIGHT ( str pos cnt -- str pos cnt+1 )
-	RIGHT-STRING >R DUP 1+ R> CMOVE>
+	STRING-TAIL >R DUP 1+ R> CMOVE>
 	1+
 ;
 
-: SLIDE-LEFT ( str pos cnt -- str pos-1 cnt-1 )
-	RIGHT-STRING >R DUP 1- R> CMOVE
-	>R 1- R> 1-
+: SLIDE-LEFT ( str pos cnt -- str pos cnt-1 )
+	STRING-TAIL >R DUP 1- R> CMOVE
+	1-
 ;
 
 : REPRINT-LINE
-	RIGHT-STRING TYPE
+	CSI SCP CSI CUH
+	STRING-TAIL TYPE
+	BL EMIT
+	CSI RCP CSI CUS
 ;
 
 : INSERT-CHARACTER ( str pos cnt char -- str pos+1 cnt )
@@ -25,25 +28,39 @@ REQUIRE term.fth
 ;
 
 : HANDLE-PRINTABLE ( str pos cnt char -- str pos+1 cnt+1 )
-	\ Print the character
-	>R R@ EMIT
+	\ Print the character and save it
+	DUP EMIT >R
 	\ Reprint the rest of the string
-	CSI SCP CSI CUH
 	REPRINT-LINE
-	CSI RCP CSI CUS
 	\ Insert the character into string memory
 	SLIDE-RIGHT
 	R> INSERT-CHARACTER
 ;
 
+: CURSOR-LEFT ( str pos cnt -- str pos' cnt )
+	>R 
+	1- DUP 0 MAX
+	TUCK = IF CSI CUB THEN
+	R>
+;
+: CURSOR-RIGHT ( str pos cnt -- str pos' cnt )
+	>R
+	1+ DUP R@ MIN
+	TUCK = IF CSI CUF THEN
+	R>
+;
+
 : HANDLE-BACKSPACE ( str pos cnt -- str pos-1 cnt-1 )
-	\ Slide the string over in memory
+	OVER 0<= IF EXIT THEN
 	SLIDE-LEFT
-	\ Reprint the rest of the string one place left
-	CSI CUB CSI SCP CSI CUH
+	CURSOR-LEFT
 	REPRINT-LINE
-	BL EMIT
-	CSI RCP CSI CUS
+;
+
+: HANDLE-DELETE ( str pos cnt -- str pos cnt-1 )
+	2DUP >= IF EXIT THEN
+	SLIDE-LEFT
+	REPRINT-LINE
 ;
 
 : HANDLE-CONTROL ( str pos cnt char -- str pos cnt flag )
@@ -56,16 +73,18 @@ REQUIRE term.fth
 		ELSE
 			DROP
 		THEN
-		>R KEY CASE
+		KEY CASE
+		[CHAR] 3 OF \ Delete
+			KEY DROP
+			HANDLE-DELETE
+			ENDOF
 		[CHAR] D OF \ Left arrow
-			1- DUP 0 MAX
-			TUCK = IF CSI CUB THEN
+			CURSOR-LEFT
 			ENDOF
 		[CHAR] C OF \ Right arrow
-			1+ DUP R@ MIN
-			TUCK = IF CSI CUF THEN
+			CURSOR-RIGHT
 			ENDOF
-		ENDCASE R>
+		ENDCASE
 		FALSE
 	ELSE
 		CASE \ General non-printable character handling
@@ -95,7 +114,7 @@ REQUIRE term.fth
 	RDROP NIP
 ;
 
-' RIGHT-STRING HIDE
+' STRING-TAIL HIDE
 ' SLIDE-RIGHT HIDE
 ' SLIDE-LEFT HIDE
 ' REPRINT-LINE HIDE
