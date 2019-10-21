@@ -1,17 +1,18 @@
 REQUIRE term.fth
 
+: RIGHT-STRING ( str pos cnt -- str pos cnt strr cntr )
+	2DUP - NEGATE 2>R
+	2DUP + R> R> -ROT
+;
+
 : SLIDE-RIGHT ( str pos cnt -- str pos cnt+1 )
-	2DUP - NEGATE 2>R ( str pos ) ( R: cnt cnt-pos )
-	2DUP + DUP 1+ R> ( str pos str+pos str+pos+1 cnt-pos ) ( R: cnt )
-	CMOVE> ( str pos ) ( R: cnt ) 
-	R> 1+ ( str pos cnt+1 )
+	RIGHT-STRING >R DUP 1+ R> CMOVE>
+	1+
 ;
 
 : SLIDE-LEFT ( str pos cnt -- str pos-1 cnt-1 )
-	2DUP - NEGATE 2>R
-	2DUP + DUP 1- R>
-	CMOVE ( str pos ) ( R: cnt )
-	1- R> 1-
+	RIGHT-STRING >R DUP 1- R> CMOVE
+	>R 1- R> 1-
 ;
 
 : REPRINT-LINE
