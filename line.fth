@@ -35,21 +35,23 @@ REQUIRE term.fth
 		KEY DUP [CHAR] [ <> IF
 			UNKEY
 			FALSE EXIT
-		ELSE DROP THEN
+		ELSE
+			DROP
+		THEN
 		KEY CASE
-		[CHAR] D OF \ Left arrow
-			>R
-			1- DUP 0 MAX TUCK = IF
-				CSI CUB
-			THEN
-			R>
+			[CHAR] D OF \ Left arrow
+				>R
+				1- DUP 0 MAX TUCK = IF
+					CSI CUB
+				THEN
+				R>
 			ENDOF
-		[CHAR] C OF \ Right arrow
-			>R
-			1+ DUP R@ MIN TUCK = IF
-				CSI CUF
-			THEN
-			R>
+			[CHAR] C OF \ Right arrow
+				>R
+				1+ DUP R@ MIN TUCK = IF
+					CSI CUF
+				THEN
+				R>
 			ENDOF
 		ENDCASE
 		FALSE EXIT
