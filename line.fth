@@ -7,6 +7,18 @@ REQUIRE term.fth
 	R> 1+ ( str pos cnt+1 )
 ;
 
+: SLIDE-LEFT ( str pos cnt -- str pos-1 cnt-1 )
+	2DUP - NEGATE 2>R
+	2DUP + DUP 1- R>
+	CMOVE ( str pos ) ( R: cnt )
+	1- R> 1-
+;
+
+: REPRINT-LINE
+	2DUP - NEGATE 2>R
+	2DUP + R> TYPE R>
+;
+
 : INSERT-CHARACTER ( str pos cnt char -- str pos+1 cnt )
 	2OVER + C!
 	>R 1+ R>
@@ -17,19 +29,11 @@ REQUIRE term.fth
 	>R R@ EMIT
 	\ Reprint the rest of the string
 	CSI SCP CSI CUH
-	2DUP - NEGATE 2>R
-	2DUP + R> TYPE R>
+	REPRINT-LINE
 	CSI RCP CSI CUS
 	\ Insert the character into string memory
 	SLIDE-RIGHT
 	R> INSERT-CHARACTER
-;
-
-: SLIDE-LEFT ( str pos cnt -- str pos-1 cnt-1 )
-	2DUP - NEGATE 2>R
-	2DUP + DUP 1- R>
-	CMOVE ( str pos ) ( R: cnt )
-	1- R> 1-
 ;
 
 : HANDLE-BACKSPACE ( str pos cnt -- str pos-1 cnt-1 )
@@ -37,8 +41,7 @@ REQUIRE term.fth
 	SLIDE-LEFT
 	\ Reprint the rest of the string one place left
 	CSI CUB CSI SCP CSI CUH
-	2DUP - NEGATE 2>R
-	2DUP + R> TYPE R>
+	REPRINT-LINE
 	BL EMIT
 	CSI RCP CSI CUS
 ;
