@@ -16,8 +16,7 @@ REQUIRE term.fth
 ;
 
 : REPRINT-LINE
-	2DUP - NEGATE 2>R
-	2DUP + R> TYPE R>
+	RIGHT-STRING TYPE
 ;
 
 : INSERT-CHARACTER ( str pos cnt char -- str pos+1 cnt )
