@@ -47,6 +47,7 @@ REQUIRE term.fth
 ;
 
 : HANDLE-CONTROL ( str pos cnt char -- str pos cnt flag )
+	\ TODO : Add handling for delete, home, end, etc.
 	DUP 27 = IF \ Escape sequences, i.e. arrow keys
 		DROP
 		KEY DUP [CHAR] [ <> IF
@@ -59,20 +60,26 @@ REQUIRE term.fth
 		[CHAR] D OF \ Left arrow
 			1- DUP 0 MAX
 			TUCK = IF CSI CUB THEN
-		ENDOF
+			ENDOF
 		[CHAR] C OF \ Right arrow
 			1+ DUP R@ MIN
 			TUCK = IF CSI CUF THEN
-		ENDOF
+			ENDOF
 		ENDCASE R>
-		FALSE EXIT
-	THEN
-	CASE \ General non-printable character handling
-		4 OF TRUE ENDOF
-		10 OF 2DUP - NEGATE BEGIN DUP 0>= WHILE CSI CUF 1- REPEAT ENDOF
-		127 OF OVER 0> IF HANDLE-BACKSPACE THEN FALSE ENDOF
+		FALSE
+	ELSE
+		CASE \ General non-printable character handling
+		4 OF
+			TRUE ENDOF
+		10 OF
+			2DUP - BEGIN DUP 0< WHILE CSI CUF 1+ REPEAT
+			1- ENDOF
+		127 OF
+			OVER 0> IF HANDLE-BACKSPACE THEN
+			FALSE ENDOF
 		>R FALSE R>
-	ENDCASE
+		ENDCASE
+	THEN
 ;
 
 : LINE-EDIT ( c-addr u -- u )
