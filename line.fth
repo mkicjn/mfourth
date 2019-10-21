@@ -58,7 +58,7 @@ REQUIRE term.fth
 	THEN
 	CASE \ General non-printable character handling
 		4 OF TRUE ENDOF
-		10 OF TRUE ENDOF
+		10 OF CR TRUE ENDOF
 		127 OF HANDLE-BACKSPACE FALSE ENDOF
 		>R FALSE R>
 	ENDCASE
