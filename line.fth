@@ -25,8 +25,22 @@ REQUIRE term.fth
 	R> INSERT-CHARACTER
 ;
 
-: HANDLE-BACKSPACE
-	\ TODO
+: SLIDE-LEFT ( str pos cnt -- str pos-1 cnt-1 )
+	2DUP - NEGATE 2>R
+	2DUP + DUP 1- R>
+	CMOVE ( str pos ) ( R: cnt )
+	1- R> 1-
+;
+
+: HANDLE-BACKSPACE ( str pos cnt -- str pos-1 cnt-1 )
+	\ Slide the string over in memory
+	SLIDE-LEFT
+	\ Reprint the rest of the string one place left
+	CSI CUB CSI SCP CSI CUH
+	2DUP - NEGATE 2>R
+	2DUP + R> TYPE R>
+	BL EMIT
+	CSI RCP CSI CUS
 ;
 
 : HANDLE-CONTROL ( str pos cnt char -- str pos cnt flag )
@@ -38,28 +52,22 @@ REQUIRE term.fth
 		ELSE
 			DROP
 		THEN
-		KEY CASE
-			[CHAR] D OF \ Left arrow
-				>R
-				1- DUP 0 MAX TUCK = IF
-					CSI CUB
-				THEN
-				R>
-			ENDOF
-			[CHAR] C OF \ Right arrow
-				>R
-				1+ DUP R@ MIN TUCK = IF
-					CSI CUF
-				THEN
-				R>
-			ENDOF
-		ENDCASE
+		>R KEY CASE
+		[CHAR] D OF \ Left arrow
+			1- DUP 0 MAX
+			TUCK = IF CSI CUB THEN
+		ENDOF
+		[CHAR] C OF \ Right arrow
+			1+ DUP R@ MIN
+			TUCK = IF CSI CUF THEN
+		ENDOF
+		ENDCASE R>
 		FALSE EXIT
 	THEN
 	CASE \ General non-printable character handling
 		4 OF TRUE ENDOF
 		10 OF CR TRUE ENDOF
-		127 OF HANDLE-BACKSPACE FALSE ENDOF
+		127 OF OVER 0> IF HANDLE-BACKSPACE THEN FALSE ENDOF
 		>R FALSE R>
 	ENDCASE
 ;
@@ -70,7 +78,7 @@ REQUIRE term.fth
 		BEGIN
 			KEY DUP BL 126 WITHIN
 		WHILE
-			OVER R@ <= IF HANDLE-PRINTABLE THEN
+			OVER R@ < IF HANDLE-PRINTABLE ELSE DROP THEN
 		REPEAT
 		HANDLE-CONTROL
 	UNTIL ( str pos cnt ) ( R: max )
