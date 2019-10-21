@@ -11,7 +11,7 @@ REQUIRE term.fth
 ;
 
 : SLIDE-LEFT ( str pos cnt -- str pos cnt-1 )
-	STRING-TAIL >R DUP 1- R> CMOVE
+	STRING-TAIL >R DUP 1+ SWAP R> CMOVE
 	1-
 ;
 
@@ -48,17 +48,16 @@ REQUIRE term.fth
 	R>
 ;
 
-: HANDLE-BACKSPACE ( str pos cnt -- str pos-1 cnt-1 )
-	OVER 0<= IF EXIT THEN
-	SLIDE-LEFT
-	CURSOR-LEFT
-	REPRINT-LINE
-;
-
 : HANDLE-DELETE ( str pos cnt -- str pos cnt-1 )
 	2DUP >= IF EXIT THEN
 	SLIDE-LEFT
 	REPRINT-LINE
+;
+
+: HANDLE-BACKSPACE ( str pos cnt -- str pos-1 cnt-1 )
+	OVER 0<= IF EXIT THEN
+	CURSOR-LEFT
+	HANDLE-DELETE
 ;
 
 : HANDLE-HOME ( str pos cnt -- str 0 cnt )
