@@ -6,4 +6,4 @@
 	ELSE
 		!
 	THEN
-;
+; IMMEDIATE
